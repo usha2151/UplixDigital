@@ -48,8 +48,7 @@ function Navbar() {
                         </button>
                     </div>
                     <div className="hidden lg:flex lg:items-center">
-      <Link to="/user" className="mx-3 text-gray-600 hover:text-gray-900">Users</Link>
-      <Link to="/occasion" className="mx-3 text-gray-600 hover:text-gray-900">Occasion</Link>
+      <Link to="/userDashboard" className="mx-3 text-gray-600 hover:text-gray-900">Users</Link>
       <Link to="/settings" className="mx-3 text-gray-600 hover:text-gray-900">Settings</Link>
       {user ? (
         <button onClick= {() =>dispatch(logout())} className="mx-3 px-4 text-sm py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:bg-green-600">Logout</button>

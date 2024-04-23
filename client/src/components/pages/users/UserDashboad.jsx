@@ -59,12 +59,17 @@ const UserDashboard = () => {
   // active or inactive
   const [isActive, setIsActive] = useState(false);
 
-  const toggleActive = () => {
-    setIsActive(!isActive);
+  const toggleActive = (id) => {
+    setClients(prevClients => prevClients.map(client => {
+      if (client.id === id) {
+        return { ...client, isActive: !client.isActive };
+      }
+      return client;
+    }));
   };
 
   // clients list
-  const clients = [
+  const [clients, setClients] = useState([
     { name: 'Boby Swaroop', email: 'boby@gmail.com', isActive: true, id: 1 },
     { name: 'Usha Singh', email: 'usha22@gmail.com', isActive: false, id: 2 },
     { name: 'Aftab Alam', email: 'aftab@gmail.com', isActive: true, id: 3 },
@@ -72,7 +77,7 @@ const UserDashboard = () => {
     { name: 'Shivang Mishra', email: 'shivang@gmail.com', isActive: true, id: 5 },
     { name: 'Diwakar', email: 'dk@gmail.com', isActive: false, id: 6 },
     { name: 'Vyankatesh', email: 'vibhu@gmail.com', isActive: true, id: 7 },
-  ];
+  ]);
   
   // festivals
   const occesion = [
@@ -120,7 +125,7 @@ const UserDashboard = () => {
   </div>
   {/* Box 3 */}
   <div className=" bg-white rounded-lg shadow-md px-2 mr-2">
-    <h3 className="text-lg font-semibold">Email Open</h3>
+    <h3 className="text-lg font-semibold">Email Opened</h3>
     <p className="text-gray-500 text-center">67%</p>
   </div>
   {/* Box 4 */}
@@ -131,39 +136,45 @@ const UserDashboard = () => {
   {/* Add User Button */}
   <div>
     <button onClick={togglePopup} className="px-4 py-2 text-base font-semibold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2">
-      <i className="fa-brands fa-accusoft"></i> Add User
+      <i className="fa-brands fa-accusoft"></i> Add Users
     </button>
   </div>
    {/* show pop-up */}
    {showPopup && (
      <div className="fixed top-0 left-0 right-0 bottom-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-     <div className="bg-white p-5 rounded-lg relative" style={{ width: '50vw', maxWidth: '560px', maxHeight: '80vh', overflowY: 'auto', padding: '20px' }}>
+     <div className="bg-white p-5 rounded-lg relative" style={{ width: '50vw', maxWidth: '650px', maxHeight: '80vh', overflowY: 'auto', padding: '20px' }}>
        <button className="absolute top-0 right-0 mt-2 mr-2 text-gray-400 hover:text-gray-600" onClick={togglePopup}>
          <i className="fa-solid fa-xmark"></i>
        </button>
        <form onSubmit={handleSave}>
          {users.map((user, index) => (
-           <div key={index} className="mb-4.5  gap-6 xl:flex-row">
+           <div key={index} className="mb-4.5">
+            <div className="mb-4.5  gap-4 xl:flex mb-2">
              <div className="w-full xl:w-full">
                <label className="mb-2.5 block text-black dark:text-white">First name</label>
-               <input type="text" name="firstName" value={user.firstName} placeholder="Enter your first name" onChange={(e) => handleInputChange(index, e)} className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary" />
+               <input type="text" name="firstName" value={user.firstName} placeholder="Enter your first name" onChange={(e) => handleInputChange(index, e)} className="w-full rounded border-[1.5px] border-stroke bg-transparent py-1 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary" />
              </div>
              <div className="w-full xl:w-full">
                <label className="mb-2.5 block text-black dark:text-white">Last name</label>
-               <input type="text" name="lastName" value={user.lastName} placeholder="Enter your last name" onChange={(e) => handleInputChange(index, e)} className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary" />
+               <input type="text" name="lastName" value={user.lastName} placeholder="Enter your last name" onChange={(e) => handleInputChange(index, e)} className="w-full rounded border-[1.5px] border-stroke bg-transparent py-1 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary" />
              </div>
+            
              <div className="w-full xl:w-full">
                <label className="mb-2.5 block text-black dark:text-white">Email <span className="text-meta-1">*</span></label>
-               <input type="email" name="email" value={user.email} placeholder="Enter your email address" onChange={(e) => handleInputChange(index, e)} className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary" />
+               <input type="email" name="email" value={user.email} placeholder="Enter your email address" onChange={(e) => handleInputChange(index, e)} className="w-full rounded border-[1.5px] border-stroke bg-transparent py-1 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary" />
              </div>
+           <button onClick={handleCancelUser} className="inline-flex justify-center items-center mt-8 rounded-md border border-transparent bg-red-500 py-2 px-4 text-sm text-white font-medium bg-blue-500 h-8">Cancel</button>
+           </div>
            </div>
          ))}
+         <div className="mt-4 flex justify-end gap-2">
+           <button onClick={handleAddUser} className="inline-flex justify-center rounded-md border border-transparent bg-primary py-2 px-4 text-sm text-white font-medium bg-blue-500"><i class="fa-solid fa-user-plus mr-1 mt-1"></i>Add Users</button>
+         </div>
+
+         <p className="text-center">OR</p>
         <div className="w-full mt-2"><label className="mb-2.5 block text-black dark:text-white">Upload Client List</label><input type="file"></input></div>
 
-         <div className="mt-4 flex justify-end gap-2">
-           <button onClick={handleCancelUser} className="inline-flex justify-center rounded-md border border-transparent bg-red-500 py-2 px-4 text-sm text-white font-medium bg-blue-500">Cancel</button>
-           <button onClick={handleAddUser} className="inline-flex justify-center rounded-md border border-transparent bg-primary py-2 px-4 text-sm text-white font-medium bg-blue-500">Add More User</button>
-         </div>
+         
          <div className="mt-4 flex justify-end">
            <button type="submit" className="inline-flex justify-center rounded-md border border-transparent bg-primary py-2 px-4 text-sm text-white font-medium bg-blue-500">Active</button>
          </div>
@@ -228,12 +239,7 @@ const UserDashboard = () => {
                         34
                       </span>
                     </div>
-                    <div>
-                      Trial{" "}
-                      <span className="px-2 bg-purple-200 text-white text-purple-700 rounded-md">
-                        34
-                      </span>
-                    </div>
+                   
                   </form>
                 </div>
               </div>
@@ -261,14 +267,14 @@ const UserDashboard = () => {
                         Email
                       </th>
                       <th scope="col" class="px-6 py-3">
-                         Email Replied
-                      </th>
-                      <th scope="col" class="px-6 py-3">
                        Email Sent
                       </th>
                       <th scope="col" class="px-6 py-3">
-                        Email Open
+                        Email Opened
                       </th>
+                      <th scope="col" class="px-6 py-3">
+                         Email Replied
+                      </th>    
                       <th scope="col" class="px-6 py-3">
                         Status
                       </th>
@@ -293,14 +299,28 @@ const UserDashboard = () => {
             {client.name}
           </th>
           <td className="px-6 py-4">{client.email}</td>
-          <td className="px-6 py-4">5</td>
-          <td className="px-6 py-4">20%</td>
           <td className="px-6 py-4">44%</td>
+          <td className="px-6 py-4">20%</td>  
+          <td className="px-6 py-4">5</td>
           <td className="px-6 py-4">
-            <button onClick={toggleActive} className={`inline-flex justify-center rounded-md border border-transparent py-2 px-4 w-16 text-sm font-medium ${client.isActive ? 'bg-green-500 text-white' : 'bg-gray-300 text-gray-500'}`}>
-              {client.isActive ? 'Active' : 'Inactive'}
-            </button>
-          </td>
+          <button
+            onClick={() => toggleActive(client.id)}
+            className={`relative inline-flex items-center rounded-full border border-gray-300 w-10 h-6 transition-colors focus:outline-none ${client.isActive ? 'bg-green-500' : 'bg-gray-300'}`}
+          >
+            <span
+              className={`absolute left-0 inline-block w-5 h-5 bg-white rounded-full shadow-sm transform transition-transform ease-in-out ${
+                client.isActive ? 'translate-x-full' : 'translate-x-0'
+              }`}
+            ></span>
+            <span
+              className={`absolute inset-y-0 left-0 flex items-center justify-center w-8 h-8 rounded-full transition-transform ease-in-out transform ${
+                client.isActive ? 'translate-x-8' : 'translate-x-0'
+              }`}
+            ></span>
+          </button>
+</td>
+
+
         </tr>
       ))}
     </tbody>
