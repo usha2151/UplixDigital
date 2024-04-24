@@ -4,7 +4,13 @@ import Navbar from "../../common/Navbar";
 const UserDashboard = () => {
   const [showPopup, setShowPopup] = useState(false);
   const [emailSchedule, setEmailScheduled] = useState(false);
+  const [festivalName, setFestivalName] = useState('');
+  const [festivalDate, setFestivalDate] = useState('');
+  const [searchInput, setSearchInput] = useState('');
+  const [filteredFestivals, setFilteredFestivals] = useState(null);
   const [festival, addFestival] = useState(false);
+  const [showSign, setShowSign] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [users, setUsers] = useState([{ firstName: '', lastName: '', email: '' }]);
 
   const handleAddUser = () => {
@@ -25,10 +31,18 @@ const UserDashboard = () => {
     e.preventDefault();
     setShowPopup(!showPopup);
   };
+  
+  const toggleSignPopup = () => {
+    setShowSign(!showSign);
+  }
   const FestPopup = (e) => {
     e.preventDefault();
     addFestival(!festival);
   };
+
+  const handleViewClient = () => {
+    setIsModalOpen(!isModalOpen);
+  }
   const plans = [
     { id: 1, name: 'Free package' },
     { id: 2, name: 'Standard Package' },
@@ -46,15 +60,7 @@ const UserDashboard = () => {
     togglePopup();
   };
 
-  const festivals = [
-    { name: "Holi", date: "March 29" },
-    { name: "Ram Navmi", date: "April 2" },
-    { name: "Eid-ul-Fitar", date: "May 2" },
-    { name: "Independence Day", date: "August 15" },
-    { name: "Raksha Bandhan", date: "August 22" },
-    { name: "Janmashtami", date: "August 30" },
-    { name: "Diwali", date: "October 24" }
-  ];
+
 
   // active or inactive
   const [isActive, setIsActive] = useState(false);
@@ -80,7 +86,7 @@ const UserDashboard = () => {
   ]);
   
   // festivals
-  const occesion = [
+  const [occesion, setOccesion] = useState([
     { name: 'Republic Day', date: '2024-01-15' },
     { name: 'Basant Panchmi', date: '2024-02-20' },
     { name: 'Holi', date: '2024-03-10' },
@@ -88,14 +94,7 @@ const UserDashboard = () => {
     { name: 'Eid-ul-fiter', date: '2024-04-20' },
     { name: 'Budh Poornima', date: '2024-05-10' },
     // Add more festivals here
-  ];
-
-  const groupedFestivals = occesion.reduce((grouped, festival) => {
-    const month = festival.date.split('-')[1];
-    grouped[month] = grouped[month] || [];
-    grouped[month].push(festival);
-    return grouped;
-  }, {});
+  ]);
 
   const getMonthName = (month) => {
     const monthNames = [
@@ -104,6 +103,61 @@ const UserDashboard = () => {
     ];
     return monthNames[parseInt(month, 10) - 1];
   };
+  const groupedFestivals = occesion.reduce((grouped, festival) => {
+    const month = festival.date.split('-')[1];
+    grouped[month] = grouped[month] || [];
+    const formattedDate = new Date(festival.date);
+    festival.formattedDate = `${formattedDate.getDate()} ${getMonthName(month)}, ${formattedDate.getFullYear()}`;
+    grouped[month].push(festival);
+    return grouped;
+  }, {});
+
+  // add festival
+  const handleAddFestival = (event) => {
+    event.preventDefault();
+
+    // Check for duplicate festival name or date
+    const isDuplicateName = occesion.some(festival => festival.name === festivalName);
+    // const isDuplicateDate = occesion.some(festival => festival.date === festivalDate);
+
+    if (isDuplicateName) {
+      alert('Festival name already exists. Please Add a new Festival.');
+      return;
+    }
+
+    // Add the new festival to the array
+    setOccesion([...occesion, { name: festivalName, date: festivalDate }]);
+    
+    // Reset input fields after adding the festival
+    setFestivalName('');
+    setFestivalDate('');
+  };
+
+ // search festivals
+ const handleSearchInputChange = (event) => {
+  const input = event.target.value.toLowerCase();
+  setSearchInput(input);
+  filterFestivals(input);
+};
+// Function to filter festivals based on search input
+const filterFestivals = (input) => {
+  const filtered = {};
+
+  Object.entries(groupedFestivals).forEach(([month, festivals]) => {
+    const filteredFestivalsInMonth = festivals.filter(festival =>
+      festival.name.toLowerCase().includes(input) || festival.formattedDate.toLowerCase().includes(input)
+    );
+    if (filteredFestivalsInMonth.length > 0) {
+      filtered[month] = filteredFestivalsInMonth;
+    }
+  });
+
+  setFilteredFestivals(filtered);
+};
+
+
+
+
 
   return (
     <>
@@ -134,6 +188,11 @@ const UserDashboard = () => {
     <p className="text-gray-500 text-center">52%</p>
   </div>
   {/* Add User Button */}
+  <div>
+    <button onClick={toggleSignPopup} className="px-4 py-2 text-base font-semibold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2">
+      <i className="fa-brands fa-accusoft"></i> View Signature
+    </button>
+  </div>
   <div>
     <button onClick={togglePopup} className="px-4 py-2 text-base font-semibold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2">
       <i className="fa-brands fa-accusoft"></i> Add Users
@@ -176,7 +235,7 @@ const UserDashboard = () => {
 
          
          <div className="mt-4 flex justify-end">
-           <button type="submit" className="inline-flex justify-center rounded-md border border-transparent bg-primary py-2 px-4 text-sm text-white font-medium bg-blue-500">Active</button>
+           <button type="submit" className="inline-flex justify-center rounded-md border border-transparent bg-primary py-2 px-4 text-sm text-white font-medium bg-blue-500">Add</button>
          </div>
        </form>
      </div>
@@ -184,6 +243,54 @@ const UserDashboard = () => {
    
       )}
    {/* show pop-up */}
+   {/* // show sign */}
+
+   {showSign && (
+     <div className="fixed top-0 left-0 right-0 bottom-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+     <div className="bg-white p-5 rounded-lg relative" style={{ width: '50vw', maxWidth: '560px', maxHeight: '80vh', overflowY: 'auto', padding: '20px' }}>
+       <button className="absolute top-0 right-0 mt-2 mr-2 text-gray-400 hover:text-gray-600" onClick={toggleSignPopup}>
+         <i className="fa-solid fa-xmark"></i>
+       </button>
+       <div>
+         <p>Boby Swaroop</p>
+         <p>Web Developer</p>
+         {/* Add social media icons here */}
+         <p>Mobile: (800) 555-0299 | Phone: (800) 555-0199</p>
+         <p>Email: john.doe@my-company.com</p>
+         <p>My Company, Street, City, Zip Code, Country</p>
+         <p><a href="www.my-company.com">www.my-company.com</a></p>
+       </div>
+       <form onSubmit={handleSave}>
+         <div className="mt-4 flex justify-end">
+           <button type="submit" className="inline-flex justify-center rounded-md border border-transparent bg-primary py-2 px-4 text-sm text-white font-medium bg-blue-500">Update</button>
+         </div>
+       </form>
+     </div>
+   </div>
+   )}
+   {/* show sign */}
+
+   {/* show view clients data */}
+   {isModalOpen && (
+     <div className="fixed top-0 left-0 right-0 bottom-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+     <div className="bg-white p-5 rounded-lg relative" style={{ width: '50vw', maxWidth: '560px', maxHeight: '80vh', overflowY: 'auto', padding: '20px' }}>
+       <button className="absolute top-0 right-0 mt-2 mr-2 text-gray-400 hover:text-gray-600" onClick={handleViewClient}>
+         <i className="fa-solid fa-xmark"></i>
+       </button>
+       <div>
+       Name <input type="text"></input>
+       Email <input type="text"></input>
+
+       </div>
+       <form >
+         <div className="mt-4 flex justify-end">
+           <button type="submit" className="inline-flex justify-center rounded-md border border-transparent bg-primary py-2 px-4 text-sm text-white font-medium bg-blue-500">Update</button>
+         </div>
+       </form>
+     </div>
+   </div>
+ )}
+   {/* show view clients data */}
 </div>
 
             
@@ -278,6 +385,9 @@ const UserDashboard = () => {
                       <th scope="col" class="px-6 py-3">
                         Status
                       </th>
+                      <th scope="col" class="px-6 py-3">
+                        Action
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
@@ -319,6 +429,7 @@ const UserDashboard = () => {
             ></span>
           </button>
 </td>
+<td className="px-6 py-4"><div className="flex gap-3"><i class="fa-solid fa-trash"></i><i class="fa-solid fa-user-pen" onClick={handleViewClient}></i></div></td>
 
 
         </tr>
@@ -428,28 +539,74 @@ const UserDashboard = () => {
         </div>
         {/* Left Sidebar */}
         <div className="w-80 bg-white shadow-md p-4">
-          <h2 className="text-lg font-semibold mb-4">List of Festivals</h2>
-          {Object.entries(groupedFestivals).map(([month, festivalsInMonth]) => (
-        <div key={month} className="border-b mb-4 pb-4 bg-slate-200 p-2">
-          <h2 className="text-xl mb-2 font-bold">{getMonthName(month)}</h2>
-          <div className="space-y-2">
-            {festivalsInMonth.map((festival, index) => (
-              <div key={index} className="flex items-center justify-between">
-                <p>{festival.name}</p>
-                <div className="flex items-center">
-                  <p className="mr-2">{festival.date}</p>
+          <h2 className="text-lg font-semibold mb-4 mt-12">List of Festivals</h2>
+          <div class="relative">
+                  <div class="absolute inset-y-0 rtl:inset-r-0 start-0 flex items-center ps-3 pointer-events-none">
+                    <svg
+                      class="w-4 h-4 text-gray-500 dark:text-gray-400"
+                      aria-hidden="true"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        stroke="currentColor"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+                      />
+                    </svg>
+                  </div>
                   <input
-                    type="checkbox"
-                    className="form-checkbox h-4 w-4 text-blue-500"
+                    type="text"
+                    id="table-search-users"
+                    class="block outline-none p-2 mb-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-60 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder="Search for Festivals"
+                    value={searchInput}
+                    onChange={handleSearchInputChange}
                   />
                 </div>
-              </div>
-            ))}
+                {(filteredFestivals && Object.keys(filteredFestivals).length > 0)
+      ? Object.entries(filteredFestivals).map(([month, festivalsInMonth]) => (
+          <div key={month} className="border-b mb-4 pb-4 bg-slate-200 p-2">
+            <h2 className="text-xl mb-2 font-bold">{getMonthName(month)}</h2>
+            <div className="space-y-2">
+              {festivalsInMonth.map((festival, index) => (
+                <div key={index} className="flex items-center justify-between">
+                  <p>{festival.name}</p>
+                  <div className="flex items-center">
+                    <p className="mr-2">{festival.formattedDate}</p>
+                    <input
+                      type="checkbox"
+                      className="form-checkbox h-4 w-4 text-blue-500"
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
-      ))}
-
-          <button onClick={FestPopup} className="mt-4 px-4 py-2 text-base font-semibold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2>Add Festivals">Add Festivals</button>
+        ))
+      : Object.entries(groupedFestivals).map(([month, festivalsInMonth]) => (
+          <div key={month} className="border-b mb-4 pb-4 bg-slate-200 p-2">
+            <h2 className="text-xl mb-2 font-bold">{getMonthName(month)}</h2>
+            <div className="space-y-2">
+              {festivalsInMonth.map((festival, index) => (
+                <div key={index} className="flex items-center justify-between">
+                  <p>{festival.name}</p>
+                  <div className="flex items-center">
+                    <p className="mr-2">{festival.formattedDate}</p>
+                    <input
+                      type="checkbox"
+                      className="form-checkbox h-4 w-4 text-blue-500"
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+          <button onClick={FestPopup} className="mt-4 px-4 py-2 text-base font-semibold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2>Add Festivals">Request New Festival</button>
      
         </div>
         {/* show pop-up */}
@@ -472,35 +629,39 @@ const UserDashboard = () => {
               <i className="fa-solid fa-xmark"></i>
             </button>
 
-            <form>
-            <div className="mb-4.5">
-      <label className="block text-black dark:text-white mb-2">Date of Occasion</label>
-      <input
-        type="date"
-        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-        required
-      />
-    </div>
+            <form onSubmit={handleAddFestival}>
+        <div className="mb-4.5">
+          <label className="block text-black dark:text-white mb-2">Date of Festival</label>
+          <input
+            type="date"
+            value={festivalDate}
+            onChange={(e) => setFestivalDate(e.target.value)}
+            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+            required
+          />
+        </div>
 
-              <div className="mb-4.5">
-                <label className="block text-black dark:text-white mb-2 mt-2">Occasion Name</label>
-                <input
-                  type="text"
-                  placeholder="Enter Occasion Name"
-                  className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                  required
-                />
-              </div>
+        <div className="mb-4.5">
+          <label className="block text-black dark:text-white mb-2 mt-2">Name of Festival</label>
+          <input
+            type="text"
+            value={festivalName}
+            onChange={(e) => setFestivalName(e.target.value)}
+            placeholder="Enter Occasion Name"
+            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+            required
+          />
+        </div>
 
-              <div className="mt-4 flex justify-end">
-                <button
-                  type="submit"
-                  className="flex-shrink-0 px-4 py-2 text-base font-semibold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2"
-                >
-                  Add Occasion
-                </button>
-              </div>
-            </form>
+        <div className="mt-4 flex justify-end">
+          <button
+            type="submit"
+            className="flex-shrink-0 px-4 py-2 text-base font-semibold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2"
+          >
+            Add Festival
+          </button>
+        </div>
+      </form>
           </div>
         </div>
       )}
