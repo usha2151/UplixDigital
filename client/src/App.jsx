@@ -17,10 +17,10 @@ function App() {
          <Route element={<PrivateRoute />}>
          <Route path="/user" element={<User />} />
          <Route path="/occasion" element={<Occasion />} />
+         <Route path="/userDashboard" element={<UserDashboard />} />
             </Route>
          <Route path="/" element={<SignUp />} />
          <Route path="/signin" element={<SignIn />} />
-         <Route path="/userDashboard" element={<UserDashboard />} />
          <Route path="/addUserInfo" element={<AddUserInfo />} />
          <Route path="/settings" element={<Settings />} />
       </Routes>

@@ -5,6 +5,8 @@ import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
 import adminRouter from './routes/adminRouter.js';
 import userRouter from './routes/userRegisterRoute.js';
+import otpRouter from './routes/emailVerifyRoute.js';
+import UserClientsRouter from './routes/clientListRouter.js';
 
 dotenv.config(); 
 
@@ -27,6 +29,12 @@ app.use('/admin', adminRouter);
 
 //============ API for user ================
 app.use('/user', userRouter);
+
+//============ verifyEmail through Otp ================
+app.use('/otp', otpRouter);
+
+//============ UsersClients ================
+app.use('/userClients',UserClientsRouter);
 
 
 app.listen(port, () => {

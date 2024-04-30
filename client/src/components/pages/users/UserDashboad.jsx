@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import Navbar from "../../common/Navbar";
+import axios from "axios";
+import { useSelector } from "react-redux";
 
 const UserDashboard = () => {
   const [showPopup, setShowPopup] = useState(false);
@@ -11,7 +13,9 @@ const UserDashboard = () => {
   const [festival, addFestival] = useState(false);
   const [showSign, setShowSign] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [clientData, setClientData] = useState("");
   const [users, setUsers] = useState([{ firstName: '', lastName: '', email: '' }]);
+  const [file, setFile] = useState(null);
 
   const handleAddUser = () => {
     setUsers([...users, { firstName: '', lastName: '', email: '' }]);
@@ -27,6 +31,11 @@ const UserDashboard = () => {
     setUsers(newUsers);
   };
 
+  // excel file clients list
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]);
+  };
+
   const togglePopup = (e) => {
     e.preventDefault();
     setShowPopup(!showPopup);
@@ -40,8 +49,9 @@ const UserDashboard = () => {
     addFestival(!festival);
   };
 
-  const handleViewClient = () => {
+  const handleViewClient = (data) => {
     setIsModalOpen(!isModalOpen);
+    setClientData(data)
   }
   const plans = [
     { id: 1, name: 'Free package' },
@@ -53,12 +63,32 @@ const UserDashboard = () => {
     e.preventDefault();
     setEmailScheduled(!emailSchedule);
   }
+  
+  const user2 = useSelector((state) => state.userData);
 
-  const handleSave = (event) => {
+  const handleSave = async (event) => {
     event.preventDefault();
-    console.log('Form Submitted');
-    togglePopup();
+  
+    try {
+      const formData = new FormData();
+      formData.append('userId',user2.userData.id)
+      formData.append('clients', file); // Assuming file is your file object
+  
+      await axios.post('http://localhost:8080/userClients/user-clients', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data' // Set Content-Type header
+        }
+      }).then(() => {
+        alert('File sent to server successfully');
+      }).catch((err) => {
+        alert(err);
+      })
+    } catch (error) {
+      console.error('Error sending file to server:', error);
+      alert('Error sending file to server:', error);
+    }
   };
+  
 
 
 
@@ -231,7 +261,7 @@ const filterFestivals = (input) => {
          </div>
 
          <p className="text-center">OR</p>
-        <div className="w-full mt-2"><label className="mb-2.5 block text-black dark:text-white">Upload Client List</label><input type="file"></input></div>
+        <div className="w-full mt-2"><label className="mb-2.5 block text-black dark:text-white">Upload Client List</label> <input type="file" onChange={handleFileChange} accept=".xlsx, .xls"  /></div>
 
          
          <div className="mt-4 flex justify-end">
@@ -278,8 +308,8 @@ const filterFestivals = (input) => {
          <i className="fa-solid fa-xmark"></i>
        </button>
        <div>
-       Name <input type="text"></input>
-       Email <input type="text"></input>
+       Name <input type="text" value={clientData.name} className="w-full rounded border-[1.5px] border-stroke bg-transparent py-1 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"></input>
+       Email <input type="text" value={clientData.email} className="w-full rounded border-[1.5px] border-stroke bg-transparent py-1 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"></input>
 
        </div>
        <form >
@@ -429,7 +459,7 @@ const filterFestivals = (input) => {
             ></span>
           </button>
 </td>
-<td className="px-6 py-4"><div className="flex gap-3"><i class="fa-solid fa-trash"></i><i class="fa-solid fa-user-pen" onClick={handleViewClient}></i></div></td>
+<td className="px-6 py-4"><div className="flex gap-3"><i class="fa-solid fa-trash"></i><i class="fa-solid fa-user-pen" onClick={() => {handleViewClient(client)}}></i></div></td>
 
 
         </tr>

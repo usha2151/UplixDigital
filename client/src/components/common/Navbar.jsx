@@ -31,6 +31,7 @@ function Navbar() {
 
 
 
+
     const toggleMenu = () => {
         setIsMenuOpen(!isMenuOpen);
     };
@@ -39,7 +40,7 @@ function Navbar() {
         <nav className={`bg-gray-100 ${isScrolled ? 'shadow-lg' : ''} fixed top-0 w-full z-10`}>
             <div className="container mx-auto px-4">
                 <div className="flex justify-between items-center py-4">
-                    <Link to="/" className="text-2xl lg:text-4xl font-extrabold text-gray-800">Uplix{user}</Link>
+                    <Link to="/" className="text-2xl lg:text-4xl font-extrabold text-gray-800">Uplix</Link>
                     <div className="flex lg:hidden">
                         <button onClick={toggleMenu} className="text-gray-600 focus:outline-none hover:text-gray-900">
                             <svg className="h-6 w-6 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -48,7 +49,7 @@ function Navbar() {
                         </button>
                     </div>
                     <div className="hidden lg:flex lg:items-center">
-      <Link to="/userDashboard" className="mx-3 text-gray-600 hover:text-gray-900">Users</Link>
+      <p className="mx-3 text-gray-600 hover:text-gray-900">{user2.userData.name}</p>
       <Link to="/settings" className="mx-3 text-gray-600 hover:text-gray-900">Settings</Link>
       {user ? (
         <button onClick= {() =>dispatch(logout())} className="mx-3 px-4 text-sm py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:bg-green-600">Logout</button>
