@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Navbar from "../../common/Navbar";
 import axios from "axios";
 import { useSelector } from "react-redux";
 
 const UserDashboard = () => {
   const [showPopup, setShowPopup] = useState(false);
+  const [addEmail, setaddEmail] = useState(false);
   const [emailSchedule, setEmailScheduled] = useState(false);
   const [festivalName, setFestivalName] = useState('');
   const [festivalDate, setFestivalDate] = useState('');
@@ -16,6 +17,8 @@ const UserDashboard = () => {
   const [clientData, setClientData] = useState("");
   const [users, setUsers] = useState([{ firstName: '', lastName: '', email: '' }]);
   const [file, setFile] = useState(null);
+  const [SmtpUserName, setsmtpUserName] = useState("");
+  const [SmtpPassword, setSmtpPassword] = useState("");
 
   const handleAddUser = () => {
     setUsers([...users, { firstName: '', lastName: '', email: '' }]);
@@ -40,6 +43,44 @@ const UserDashboard = () => {
     e.preventDefault();
     setShowPopup(!showPopup);
   };
+
+      const userLogginId = useSelector((state) => state.userData);
+
+
+
+  // addSmtp Details
+  const addSmtpEmail =  () => {
+    setaddEmail(!addEmail);
+
+  };
+
+  // if user add smtp details
+  const handleSubmitSmtp = async (e) => {
+    e.preventDefault();
+    if(!SmtpPassword || !SmtpUserName){
+      alert('Add Smtp details first!');
+    }
+    else{
+        try {
+      // Send data to Node.js server using Axios
+       await axios.post('http://localhost:8080/SMTP/smtp-add', {
+        userId: userLogginId.userData.id ? userLogginId.userData.id :  3,
+        SmtpUserName,
+        SmtpPassword,
+      }).then(() => {
+        alert('Smtp Details Added successfully');
+        setaddEmail(!addEmail);
+      console.log('SMTP email added successfully');
+      }).catch((err )=>{
+        alert(err);
+      })
+    } catch (error) {
+      // Handle error
+      console.error('Error adding SMTP email:', error);
+    }
+  }
+  }
+  
   
   const toggleSignPopup = () => {
     setShowSign(!showSign);
@@ -66,30 +107,39 @@ const UserDashboard = () => {
   
   const user2 = useSelector((state) => state.userData);
 
-  const handleSave = async (event) => {
-    event.preventDefault();
-  
-    try {
-      const formData = new FormData();
-      formData.append('userId',user2.userData.id)
-      formData.append('clients', file); // Assuming file is your file object
-  
-      await axios.post('http://localhost:8080/userClients/user-clients', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data' // Set Content-Type header
-        }
-      }).then(() => {
-        alert('File sent to server successfully');
-      }).catch((err) => {
-        alert(err);
-      })
-    } catch (error) {
-      console.error('Error sending file to server:', error);
-      alert('Error sending file to server:', error);
-    }
-  };
-  
+const handleSave = async (event) => {
+  event.preventDefault();
 
+  // Assuming users and file are available in your component's state
+  console.log(users); // Log user data
+
+  try {
+    const formData = new FormData();
+    if (users.length > 0) {
+      // Append user data to formData only if users array is not empty
+      formData.append('userData', JSON.stringify(users));
+      formData.append('userId',userLogginId.userData.id)
+
+    }
+    if (file) {
+      // Append file to formData if it exists
+      formData.append('clients', file);
+      formData.append('userId',userLogginId.userData.id)
+    }
+
+    await axios.post('http://localhost:8080/userClients/user-clients', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+    alert('Data saved successfully');
+  } catch (error) {
+    console.error('Error uploading data:', error);
+    alert('Error uploading data:', error);
+  }
+};
+
+  
 
 
   // active or inactive
@@ -114,6 +164,18 @@ const UserDashboard = () => {
     { name: 'Diwakar', email: 'dk@gmail.com', isActive: false, id: 6 },
     { name: 'Vyankatesh', email: 'vibhu@gmail.com', isActive: true, id: 7 },
   ]);
+
+  //when user has login to show the clients list
+const fetchClientsData = async () => {
+  try {
+    // Make HTTP request to fetch data from backend
+    const response = await axios.get('http://localhost:8080/userClients/clientsData');
+    setClients(response.data.clients);
+  } catch (error) {
+    console.error('Error fetching clients:', error);
+    // Handle error
+  }
+};
   
   // festivals
   const [occesion, setOccesion] = useState([
@@ -186,6 +248,10 @@ const filterFestivals = (input) => {
 };
 
 
+useEffect(() => {
+  fetchClientsData();
+},[]);
+
 
 
 
@@ -226,6 +292,11 @@ const filterFestivals = (input) => {
   <div>
     <button onClick={togglePopup} className="px-4 py-2 text-base font-semibold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2">
       <i className="fa-brands fa-accusoft"></i> Add Users
+    </button>
+  </div>
+  <div>
+    <button onClick={addSmtpEmail} className="px-4 py-2 text-base font-semibold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2">
+      <i className="fa-brands fa-accusoft"></i> Add Email
     </button>
   </div>
    {/* show pop-up */}
@@ -299,6 +370,47 @@ const filterFestivals = (input) => {
    </div>
    )}
    {/* show sign */}
+   {/* show addSmtp details */}
+   {addEmail && (
+  <div className="fixed top-0 left-0 right-0 bottom-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+    <div className="bg-white p-5 rounded-lg relative" style={{ width: '50vw', maxWidth: '560px', maxHeight: '80vh', overflowY: 'auto', padding: '20px' }}>
+      <button className="absolute top-0 right-0 mt-2 mr-2 text-gray-400 hover:text-gray-600" onClick={addSmtpEmail}>
+        <i className="fa-solid fa-xmark"></i>
+      </button>
+      <form onSubmit={handleSubmitSmtp} className="grid grid-cols-2 gap-4">
+        <div>
+          <label htmlFor="hostname" className="block text-sm font-medium text-gray-700">Hostname:</label>
+          <input type="text" id="hostname" name="hostname" className="mt-1 p-2 border border-gray-300 rounded-md w-full" required />
+        </div>
+        <div>
+          <label htmlFor="port" className="block text-sm font-medium text-gray-700">Port:</label>
+          <input type="text" id="port" name="port" className="mt-1 p-2 border border-gray-300 rounded-md w-full" required />
+        </div>
+        <div>
+          <label htmlFor="username" className="block text-sm font-medium text-gray-700">Username:</label>
+          <input type="text" onChange={(e) => setsmtpUserName(e.target.value)} id="username" name="username" className="mt-1 p-2 border border-gray-300 rounded-md w-full" required />
+        </div>
+        <div>
+          <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password:</label>
+          <input type="password"  onChange={(e) => 
+            setSmtpPassword(e.target.value)} id="password" name="password" className="mt-1 p-2 border border-gray-300 rounded-md w-full" required />
+        </div>
+        <div>
+          <label htmlFor="encryption" className="block text-sm font-medium text-gray-700">Encryption:</label>
+          <select id="encryption" name="encryption" className="mt-1 p-2 border border-gray-300 rounded-md w-full" required>
+            <option value="ssl">SSL</option>
+            <option value="tls">TLS</option>
+          </select>
+        </div>
+        <div className="flex justify-end col-span-2">
+          <button type="submit" className="inline-flex justify-center rounded-md border border-transparent bg-primary py-2 px-4 text-sm text-white font-medium bg-blue-500">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+)}
+
+   {/* show addsmtp details */}
 
    {/* show view clients data */}
    {isModalOpen && (

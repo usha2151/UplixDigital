@@ -7,6 +7,7 @@ import adminRouter from './routes/adminRouter.js';
 import userRouter from './routes/userRegisterRoute.js';
 import otpRouter from './routes/emailVerifyRoute.js';
 import UserClientsRouter from './routes/clientListRouter.js';
+import SmtpsetRouter from './routes/smptRouter.js';
 
 dotenv.config(); 
 
@@ -36,6 +37,8 @@ app.use('/otp', otpRouter);
 //============ UsersClients ================
 app.use('/userClients',UserClientsRouter);
 
+//============ SMTP SET ================
+app.use('/SMTP',SmtpsetRouter);
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
