@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "../../common/Navbar";
 import axios from "axios";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { AddFestivals } from "../../../redux/actions/actions";
 
 const UserDashboard = () => {
+  const dispatch = useDispatch();
   const [showPopup, setShowPopup] = useState(false);
   const [addEmail, setaddEmail] = useState(false);
   const [emailSchedule, setEmailScheduled] = useState(false);
   const [festivalName, setFestivalName] = useState('');
   const [festivalDate, setFestivalDate] = useState('');
+  const [festivalTitle, setFestivalTitle] = useState('');
   const [searchInput, setSearchInput] = useState('');
   const [filteredFestivals, setFilteredFestivals] = useState(null);
   const [festival, addFestival] = useState(false);
@@ -205,25 +208,50 @@ const fetchClientsData = async () => {
   }, {});
 
   // add festival
-  const handleAddFestival = (event) => {
+  const handleAddFestival = async (event) => {
     event.preventDefault();
-
-    // Check for duplicate festival name or date
+  
+    // Check for duplicate festival name
     const isDuplicateName = occesion.some(festival => festival.name === festivalName);
-    // const isDuplicateDate = occesion.some(festival => festival.date === festivalDate);
-
+  
     if (isDuplicateName) {
-      alert('Festival name already exists. Please Add a new Festival.');
+      alert('Festival name already exists. Please add a new Festival.');
       return;
     }
-
-    // Add the new festival to the array
-    setOccesion([...occesion, { name: festivalName, date: festivalDate }]);
-    
-    // Reset input fields after adding the festival
-    setFestivalName('');
-    setFestivalDate('');
+  
+    // Store the festival into the database
+    const festivalData = {
+      date: festivalDate,
+      name: festivalName,
+      title: festivalTitle
+    };
+  
+    try {
+      const response = await axios.post('http://localhost:8080/festivals/add-festivals', festivalData);
+  
+      // Check if response status is successful
+      if (response.status === 200) {
+        alert('Festival added successfully');
+        
+        // Add the new festival to the array
+        // setOccesion([...occesion, { name: festivalName, date: festivalDate }]);
+        
+        // Reset input fields after adding the festival
+        setFestivalName('');
+        setFestivalDate('');
+        setFestivalTitle('');
+      } else {
+        alert('Failed to add festival');
+      }
+  
+      return response.data; // Return server response data
+    } catch (error) {
+      console.error('Error adding festival:', error);
+      alert('Failed to add festival');
+      throw error; // Throw error to handle it where this function is called
+    }
   };
+  
 
  // search festivals
  const handleSearchInputChange = (event) => {
@@ -789,7 +817,18 @@ useEffect(() => {
             type="text"
             value={festivalName}
             onChange={(e) => setFestivalName(e.target.value)}
-            placeholder="Enter Occasion Name"
+            placeholder="Enter Festival Name"
+            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+            required
+          />
+        </div>
+        <div className="mb-4.5">
+          <label className="block text-black dark:text-white mb-2 mt-2">Title of Festival</label>
+          <input
+            type="text"
+            value={festivalTitle}
+            onChange={(e) => setFestivalTitle(e.target.value)}
+            placeholder="Enter Festival Title"
             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
             required
           />
