@@ -2,13 +2,19 @@ import React, { useEffect, useState } from 'react';
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../../redux/actions/actions';
+import axios from 'axios';
+import { FestivalPending } from '../../redux/actions/actions';
 
 function Navbar() {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [notificationCount, setNotificationCount] = useState('');
+
+    const user = useSelector((state) => state.auth.isAuthenticated);
+    const user2 = useSelector((state) => state.userData);
+
 
     const dispatch = useDispatch();
-
     useEffect(() => {
         const handleScroll = () => {
             const offset = window.scrollY;
@@ -18,18 +24,29 @@ function Navbar() {
                 setIsScrolled(false);
             }
         };
-
+    
+        const fetchNotification = async () => {
+            if (user2 && user2.userData.type === 'admin') {
+                try {
+                    const response = await axios.get('http://localhost:8080/festivals/festival-request');
+                    setNotificationCount(response.data);
+                } catch (error) {
+                    console.error('Error fetching pending notifications:', error);
+                }
+            }
+        };
+    
         window.addEventListener('scroll', handleScroll);
-
+        fetchNotification();
+    
         return () => {
             window.removeEventListener('scroll', handleScroll);
         };
-    }, []);
+    }, [dispatch]);
+    
 
-    const user = useSelector((state) => state.auth.isAuthenticated);
-    const user2 = useSelector((state) => state.userData);
-
-
+    // const notifications = useSelector(state => state.festivalPendingReducer);
+    // console.log(notifications);
 
 
     const toggleMenu = () => {
@@ -50,9 +67,17 @@ function Navbar() {
                     </div>
                     <div className="hidden lg:flex lg:items-center">
       <p className="mx-3 text-gray-600 hover:text-gray-900">{user2.userData.name}</p>
-      <Link to="/settings" className="mx-3 text-gray-600 hover:text-gray-900">Settings</Link>
+      <Link to="/pendingFestivals" className="mx-3 text-gray-600 hover:text-gray-900">Settings{user2.userData.type}</Link>
       {user ? (
-        <button onClick= {() =>dispatch(logout())} className="mx-3 px-4 text-sm py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:bg-green-600">Logout</button>
+        <>
+          {user2.userData.type === 'admin' && (
+            <Link to="/pendingFestivals" className="mx-3 text-gray-600 hover:text-gray-900">
+             <i class="fa-solid fa-bell"></i>
+              {notificationCount.length > 0 && <span className="text-red-500">+{notificationCount.length}</span>}
+            </Link>
+          )}
+          <button onClick= {() =>dispatch(logout())} className="mx-3 px-4 text-sm py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:bg-green-600">Logout</button>
+        </>
       ) : (
         <Link to="/"><button className="mx-3 px-4 text-sm py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:bg-green-600">SIGN UP</button></Link>
       )}

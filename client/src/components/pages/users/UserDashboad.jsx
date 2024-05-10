@@ -48,6 +48,7 @@ const UserDashboard = () => {
   };
 
       const userLogginId = useSelector((state) => state.userData);
+      console.log(userLogginId);
 
 
 
@@ -109,13 +110,16 @@ const UserDashboard = () => {
   }
   
   const user2 = useSelector((state) => state.userData);
-
+   console.log(user2);
 const handleSave = async (event) => {
+
   event.preventDefault();
 
-  // Assuming users and file are available in your component's state
-  console.log(users); // Log user data
-
+  if ((!users[0].firstName || !users[0].lastName || !users[0].email) && !file) {
+    alert('Please add either the user details or upload a file!');
+    return;
+  }
+  
   try {
     const formData = new FormData();
     if (users.length > 0) {
@@ -134,8 +138,11 @@ const handleSave = async (event) => {
       headers: {
         'Content-Type': 'multipart/form-data'
       }
-    });
-    alert('Data saved successfully');
+    }).then(() => {
+      alert('Data added');
+    }).catch((err) => {
+      alert(err);
+    })
   } catch (error) {
     console.error('Error uploading data:', error);
     alert('Error uploading data:', error);

@@ -4,7 +4,7 @@ import xlsx from 'node-xlsx';
 
 export const UserClients = (req, res) => {
     if (req.file && req.body.userId) {
-        console.log(req.body.userId);
+        console.log(req.body.userId[0]);
         const workbook = xlsx.parse(req.file.buffer);
         // Assuming the first sheet contains the data
         const sheet = workbook[0].data;
@@ -21,9 +21,9 @@ export const UserClients = (req, res) => {
         
         // Add userId to each client data object
         clientsData.forEach(client => {
-            client.userId = req.body.userId;
+            client.userId = req.body.userId[0];
         });
-        
+        console.log(clientsData);
 
         // Insert clients data into the database
         db.query('INSERT INTO userclients (user_id, first_name, last_name, email) VALUES ?', [clientsData.map(client => [client.userId, client.firstName, client.lastName, client.email])], (err, result) => {

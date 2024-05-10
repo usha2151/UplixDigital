@@ -3,6 +3,7 @@ const initialState = {
   userData: {
     id: null,
     name: null,
+    type: null,
   },
 };
 
@@ -14,6 +15,7 @@ const userData = (state = initialState, action) => {
         userData: {
           id: action.payload.id,
           name: action.payload.name,
+          type: action.payload.type,
         },
       };
     default:

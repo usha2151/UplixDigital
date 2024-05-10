@@ -51,7 +51,8 @@ export const SignIn = () => {
        dispatch(login(response.data.token));
        dispatch(UserData({
         id: response.data.data[0].user_id,
-        name: response.data.data[0].user_name
+        name: response.data.data[0].user_name,
+        type:response.data.type
       }));
        localStorage.setItem('userData', JSON.stringify(response.data.data[0])); 
        if (response.data.type === 'user') {

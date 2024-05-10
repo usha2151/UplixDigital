@@ -7,6 +7,7 @@ import AddUserInfo from "./components/pages/form/AddUserInfo";
 import { SignIn } from "./components/pages/form/SignIn";
 import PrivateRoute from "./components/common/Protected";
 import UserDashboard from "./components/pages/users/UserDashboad";
+import FestivalsRequest from "./components/pages/form/FestivalsRequest";
 function App() {
 
 
@@ -18,6 +19,8 @@ function App() {
          <Route path="/user" element={<User />} />
          <Route path="/occasion" element={<Occasion />} />
          <Route path="/userDashboard" element={<UserDashboard />} />
+         <Route path="/pendingFestivals" element={<FestivalsRequest />} />
+
             </Route>
          <Route path="/" element={<SignUp />} />
          <Route path="/signin" element={<SignIn />} />
