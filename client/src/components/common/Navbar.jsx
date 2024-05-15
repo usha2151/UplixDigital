@@ -2,13 +2,19 @@ import React, { useEffect, useState } from 'react';
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../../redux/actions/actions';
+import axios from 'axios';
+import { FestivalPending } from '../../redux/actions/actions';
 
 function Navbar() {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [notificationCount, setNotificationCount] = useState('');
+
+    const user = useSelector((state) => state.auth.isAuthenticated);
+    const user2 = useSelector((state) => state.userData);
+
 
     const dispatch = useDispatch();
-
     useEffect(() => {
         const handleScroll = () => {
             const offset = window.scrollY;
@@ -18,17 +24,29 @@ function Navbar() {
                 setIsScrolled(false);
             }
         };
-
+    
+        const fetchNotification = async () => {
+            if (user2 && user2.userData.type === 'admin') {
+                try {
+                    const response = await axios.get('http://localhost:8080/festivals/festival-request');
+                    setNotificationCount(response.data);
+                } catch (error) {
+                    console.error('Error fetching pending notifications:', error);
+                }
+            }
+        };
+    
         window.addEventListener('scroll', handleScroll);
-
+        fetchNotification();
+    
         return () => {
             window.removeEventListener('scroll', handleScroll);
         };
-    }, []);
+    }, [dispatch]);
+    
 
-    const user = useSelector((state) => state.auth.isAuthenticated);
-    const user2 = useSelector((state) => state.userData);
-
+    // const notifications = useSelector(state => state.festivalPendingReducer);
+    // console.log(notifications);
 
 
     const toggleMenu = () => {
@@ -39,7 +57,7 @@ function Navbar() {
         <nav className={`bg-gray-100 ${isScrolled ? 'shadow-lg' : ''} fixed top-0 w-full z-10`}>
             <div className="container mx-auto px-4">
                 <div className="flex justify-between items-center py-4">
-                    <Link to="/" className="text-2xl lg:text-4xl font-extrabold text-gray-800">Uplix{user}</Link>
+                    <Link to="/" className="text-2xl lg:text-4xl font-extrabold text-gray-800">Uplix</Link>
                     <div className="flex lg:hidden">
                         <button onClick={toggleMenu} className="text-gray-600 focus:outline-none hover:text-gray-900">
                             <svg className="h-6 w-6 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -48,10 +66,18 @@ function Navbar() {
                         </button>
                     </div>
                     <div className="hidden lg:flex lg:items-center">
-      <Link to="/userDashboard" className="mx-3 text-gray-600 hover:text-gray-900">Users</Link>
-      <Link to="/settings" className="mx-3 text-gray-600 hover:text-gray-900">Settings</Link>
+      <p className="mx-3 text-gray-600 hover:text-gray-900">{user2.userData.name}</p>
+      <Link to="/pendingFestivals" className="mx-3 text-gray-600 hover:text-gray-900">Settings{user2.userData.type}</Link>
       {user ? (
-        <button onClick= {() =>dispatch(logout())} className="mx-3 px-4 text-sm py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:bg-green-600">Logout</button>
+        <>
+          {user2.userData.type === 'admin' && (
+            <Link to="/pendingFestivals" className="mx-3 text-gray-600 hover:text-gray-900">
+             <i class="fa-solid fa-bell"></i>
+              {notificationCount.length > 0 && <span className="text-red-500">+{notificationCount.length}</span>}
+            </Link>
+          )}
+          <button onClick= {() =>dispatch(logout())} className="mx-3 px-4 text-sm py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:bg-green-600">Logout</button>
+        </>
       ) : (
         <Link to="/"><button className="mx-3 px-4 text-sm py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:bg-green-600">SIGN UP</button></Link>
       )}

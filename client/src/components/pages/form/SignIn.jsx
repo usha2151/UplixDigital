@@ -13,12 +13,12 @@ export const SignIn = () => {
   const [error, setError] = useState("");
   const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
     // Check if user is already authenticated
-    useEffect(() => {
-      if (isAuthenticated) {
+    // useEffect(() => {
+    //   if (isAuthenticated) {
 
-        return navigate('/user');
-      }
-    }, [isAuthenticated]);
+    //     return navigate('/user');
+    //   }
+    // }, [isAuthenticated]);
 
 
   // Example state management for form fields
@@ -49,9 +49,17 @@ export const SignIn = () => {
       if(response.data.Status === 'Success'){
        localStorage.setItem('token', response.data.token);
        dispatch(login(response.data.token));
-       dispatch(UserData(response.data.data));
-       localStorage.setItem('userData', JSON.stringify(response.data.data)); 
-       navigate('/user');
+       dispatch(UserData({
+        id: response.data.data[0].user_id,
+        name: response.data.data[0].user_name,
+        type:response.data.type
+      }));
+       localStorage.setItem('userData', JSON.stringify(response.data.data[0])); 
+       if (response.data.type === 'user') {
+        navigate('/userDashboard');
+      } else if (response.data.type === 'admin') {
+        navigate('/user');
+      }
       }
       else if (response.data.Error){
         setError(response.data.Error);
@@ -72,7 +80,7 @@ export const SignIn = () => {
                 className="w-full h-auto bg-blue-500 dark:bg-gray-800 hidden lg:block  bg-cover rounded-l-lg"
                 style={{ backgroundImage: "url('https://flowbite.s3.amazonaws.com/blocks/marketing-ui/authentication/illustration.svg')" }}
               ></div>
-              <div className=" bg-white dark:bg-gray-700 p-5 rounded-lg lg:rounded-l-none">
+              <div className="bg-white dark:bg-gray-700 p-5 rounded-lg lg:rounded-l-none">
                 <h3 className="py-4 text-2xl text-center text-gray-800 dark:text-white">
                   SignIn an Account
                 </h3>
