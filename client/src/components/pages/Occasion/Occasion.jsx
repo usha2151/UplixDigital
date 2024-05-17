@@ -1,11 +1,30 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Navbar from "../../common/Navbar";
+import axios from "axios";
 
 const Occasion = () => {
 
   const [showPopup, setShowPopup] = useState(false);
   const [emailSchedule, setEmailScheduled] = useState(false);
+  const [festivalId, setFestivalId] = useState("");
+  const [festivals, setFestivals] = useState([]);
+  const [subject, setSubject] = useState('');
+  const [message, setMessage] = useState('');
 
+  useEffect(() => {
+    const fetchFestivals = async () => {
+      try {
+        const response = await axios.get('http://localhost:8080/festivals/verifyFestivals');
+        setFestivals(response.data);
+        
+      } catch (error) {
+        console.error('Error fetching festivals:', error);
+        // Handle error
+      }
+    };
+
+    fetchFestivals();
+  }, []);
 
   // Function to toggle popup visibility
   const togglePopup = (e) => {
@@ -14,8 +33,8 @@ const Occasion = () => {
   };
 
   // email scheduled
-  const emailScheduled = (e) => {
-    e.preventDefault();
+  const emailScheduled = (id,date) => {
+   setFestivalId(id);
    setEmailScheduled(!emailSchedule);
   }
 
@@ -26,20 +45,47 @@ const Occasion = () => {
     console.log('Form Submitted');
     togglePopup();
   };
+  
+
+  // email schedule function
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const emailData = {
+      festival_id: festivalId,
+      festival_subject: subject,
+      festival_message: message,
+    };
+
+    try {
+      const response = await axios.post('http://localhost:8080/festivals/scheduleEmail', emailData);
+
+      if (response.status === 200) {
+        alert('Email scheduled successfully');
+      } else {
+        alert('Failed to schedule email');
+      }
+    } catch (error) {
+      console.error('Error scheduling email:', error);
+      alert('An error occurred while scheduling the email');
+    }
+
+    setEmailScheduled(false);
+  };
   return (
     <>
       <Navbar />
       <div class="container mx-auto px-4 sm:px-8 max-w-6xl mt-12 ">
         <div class="py-12">
           <div class="flex flex-row mb-1 te-black sm:mb-0 justify-between w-full">
-            <h2 class="text-xl leading-tight">All Users</h2>
+            <h2 class="text-xl leading-tight">All Festivals</h2>
             <div class="">
               <form class="flex w-full">
                 <button onClick={togglePopup}
                   class="flex-shrink-0 px-4 py-2 text-base font-semibold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2"
                   type="submit"
                 >
-                  <i class="fa-brands fa-accusoft"></i> Add Occasion
+                  <i class="fa-brands fa-accusoft"></i> Add Festival
                 </button>
               </form>
             </div>  
@@ -66,7 +112,7 @@ const Occasion = () => {
 
             <form onSubmit={handleSave}>
             <div className="mb-4.5">
-      <label className="block text-black dark:text-white mb-2">Date of Occasion</label>
+      <label className="block text-black dark:text-white mb-2">Date of Festival</label>
       <input
         type="date"
         className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
@@ -75,7 +121,7 @@ const Occasion = () => {
     </div>
 
               <div className="mb-4.5">
-                <label className="block text-black dark:text-white mb-2 mt-2">Occasion Name</label>
+                <label className="block text-black dark:text-white mb-2 mt-2">Festival Name</label>
                 <input
                   type="text"
                   placeholder="Enter Occasion Name"
@@ -91,7 +137,7 @@ const Occasion = () => {
                   type="submit"
                   className="flex-shrink-0 px-4 py-2 text-base font-semibold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2"
                 >
-                  Add Occasion
+                  Add Festival
                 </button>
               </div>
             </form>
@@ -118,34 +164,33 @@ const Occasion = () => {
             >
               <i className="fa-solid fa-xmark"></i>
             </button>
-              <div className="">
-  <div className="flex flex-col gap-6">
-    <div className="mb-4">
-      <input
-        type="text"
-        placeholder="Subject"
-        className="rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary"
-      />
-    </div>
-
-    <div className="mb-4">
-      <textarea
-        rows="4"
-        placeholder="Message"
-        className="rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary"
-      ></textarea>
-    </div>
-  </div>
-</div>
-
-<div className="mt-4 flex justify-end">
-  <button
-    type="submit"
-    className="bg-green-500 px-4 py-2 rounded-md text-white"
-  >
-    Send
-  </button>
-</div>
+            <form onSubmit={handleSubmit}>
+          <div className="flex flex-col gap-6">
+            <div className="mb-4">
+              <input
+                type="text"
+                placeholder="Subject"
+                value={subject}
+                onChange={(e) => setSubject(e.target.value)}
+                className="rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary"
+              />
+            </div>
+            <div className="mb-4">
+              <textarea
+                rows="4"
+                placeholder="Message"
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                className="rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary"
+              ></textarea>
+            </div>
+            <div className="mt-4 flex justify-end">
+              <button type="submit" className="bg-green-500 px-4 py-2 rounded-md text-white">
+                Send
+              </button>
+            </div>
+          </div>
+        </form>
       </div> 
       </div>
       
@@ -227,10 +272,10 @@ const Occasion = () => {
                         </div>
                       </th>
                       <th scope="col" class="px-6 py-3 border-2 border-white">
-                        Date of occasion
+                        Date of Festival
                       </th>
                       <th scope="col" class="px-6 py-3 border-2 border-white">
-                       Name of occasion
+                       Name of The Festival
                       </th>
                       <th scope="col" class="px-6 py-3 border-2 border-white">
                         Email scheduled
@@ -245,175 +290,27 @@ const Occasion = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                      <td class="w-4 p-4">
-                        <div class="flex items-center">
-                          <input
-                            id="checkbox-table-search-1"
-                            type="checkbox"
-                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                          />
-                          <label for="checkbox-table-search-1" class="sr-only">
-                            checkbox
-                          </label>
-                        </div>
-                      </td>
-                      <th
-                        scope="row"
-                        class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-                      >
-                        24 March, 2024
-                      </th>
-                      <td class="px-6 py-4">Holi</td>
-                      <td class="px-6 py-4">Yes</td>
-                      <td class="px-6 py-4">Yes</td>
-                      <td  onClick={emailScheduled} class="px-6 py-4">Yes</td>
-                    </tr>
-                    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                      <td class="w-4 p-4">
-                        <div class="flex items-center">
-                          <input
-                            id="checkbox-table-search-2"
-                            type="checkbox"
-                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                          />
-                          <label for="checkbox-table-search-2" class="sr-only">
-                            checkbox
-                          </label>
-                        </div>
-                      </td>
-                      <th
-                        scope="row"
-                        class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-                      >
-                       18 April, 2024
-                      </th>
-                      <td class="px-6 py-4">Ram Navmi</td>
-                      <td class="px-6 py-4">No</td>
-                      <td class="px-6 py-4">No</td>
-                      <td class="px-6 py-4">Yes</td>
-                    </tr>
-
-                    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                      <td class="w-4 p-4">
-                        <div class="flex items-center">
-                          <input
-                            id="checkbox-table-search-3"
-                            type="checkbox"
-                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                          />
-                          <label for="checkbox-table-search-3" class="sr-only">
-                            checkbox
-                          </label>
-                        </div>
-                      </td>
-                      <th
-                        scope="row"
-                        class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-                      >
-                        11 April, 2024
-                      </th>
-                      <td class="px-6 py-4">Eid-ul-Fitar</td>
-                      <td class="px-6 py-4">No</td>
-                      <td class="px-6 py-4">No</td>
-                      <td class="px-6 py-4">Yes</td>
-                    </tr>
-                    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                      <td class="w-4 p-4">
-                        <div class="flex items-center">
-                          <input
-                            id="checkbox-table-search-3"
-                            type="checkbox"
-                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                          />
-                          <label for="checkbox-table-search-3" class="sr-only">
-                            checkbox
-                          </label>
-                        </div>
-                      </td>
-                      <th
-                        scope="row"
-                        class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-                      >
-                        15 August, 2024
-                      </th>
-                      <td class="px-6 py-4">Independence Day</td>
-                      <td class="px-6 py-4">No</td>
-                      <td class="px-6 py-4">No</td>
-                      <td class="px-6 py-4">Yes</td>
-                    </tr>
-                    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                      <td class="w-4 p-4">
-                        <div class="flex items-center">
-                          <input
-                            id="checkbox-table-search-3"
-                            type="checkbox"
-                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                          />
-                          <label for="checkbox-table-search-3" class="sr-only">
-                            checkbox
-                          </label>
-                        </div>
-                      </td>
-                      <th
-                        scope="row"
-                        class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-                      >
-                        22 August, 2024
-                      </th>
-                      <td class="px-6 py-4">Raksha Bandhan</td>
-                      <td class="px-6 py-4">Yes</td>
-                      <td class="px-6 py-4">Yes</td>
-                      <td class="px-6 py-4">Yes</td>
-                    </tr>
-                    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                      <td class="w-4 p-4">
-                        <div class="flex items-center">
-                          <input
-                            id="checkbox-table-search-3"
-                            type="checkbox"
-                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                          />
-                          <label for="checkbox-table-search-3" class="sr-only">
-                            checkbox
-                          </label>
-                        </div>
-                      </td>
-                      <th
-                        scope="row"
-                        class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-                      >
-                        26 August, 2024
-                      </th>
-                      <td class="px-6 py-4">Janamasthmi</td>
-                      <td class="px-6 py-4">Yes</td>
-                      <td class="px-6 py-4">Yes</td>
-                      <td class="px-6 py-4">No</td>
-                    </tr>
-                    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                      <td class="w-4 p-4">
-                        <div class="flex items-center">
-                          <input
-                            id="checkbox-table-search-3"
-                            type="checkbox"
-                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                          />
-                          <label for="checkbox-table-search-3" class="sr-only">
-                            checkbox
-                          </label>
-                        </div>
-                      </td>
-                      <th
-                        scope="row"
-                        class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-                      >
-                        31 October, 2024
-                      </th> 
-                      <td class="px-6 py-4">Diwali</td>
-                      <td class="px-6 py-4">Yes</td>
-                      <td class="px-6 py-4">Yes</td>
-                      <td class="px-6 py-4">No</td>
-                    </tr>
+                  {festivals.map((festival, index) => (
+            <tr key={festival.id} className={index % 2 === 0 ? 'bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600' : 'bg-gray-50 border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700'}>
+              <td>
+                <div className="flex items-center">
+                  <input
+                    id={`checkbox-table-search-${index}`}
+                    type="checkbox"
+                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                  />
+                  <label htmlFor={`checkbox-table-search-${index}`} className="sr-only">
+                    checkbox
+                  </label>
+                </div>
+              </td>
+              <td className="px-6 py-4">{festival.festival_date}</td>
+              <td className="px-6 py-4">{festival.festival_name}</td>
+              <td className="px-6 py-4">Yes</td>
+              <td className="px-6 py-4">Yes</td>
+              <td className="px-6 py-4" onClick={() => emailScheduled(festival.festival_id,festival.festivalDate)}>Yes</td>
+            </tr>
+                     ))}
                   </tbody>
                 </table>
               </div>

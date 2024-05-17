@@ -9,6 +9,7 @@ import otpRouter from './routes/emailVerifyRoute.js';
 import UserClientsRouter from './routes/clientListRouter.js';
 import SmtpsetRouter from './routes/smptRouter.js';
 import AddFestivalRouter from './routes/addFestivalRouter.js';
+import { checkAndSendFestivalEmails } from './controller/emailSent.js';
 
 
 dotenv.config(); 
@@ -49,3 +50,5 @@ app.use('/festivals',AddFestivalRouter);
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
+
+checkAndSendFestivalEmails();

@@ -35,9 +35,12 @@ export const login = (user) => {
 
 // add festivals
 
-export const AddFestivals = (festivalData) => {
+export const AddFestivals = (festivalData, userType) => {
+  alert('gg');
   return async (dispatch) => {
     try {
+      festivalData.userType = userType;
+      console.log(festivalData);
       const response = await axios.post('http://localhost:8080/festivals/add-festivals', festivalData).then(() => {
         alert('done');
       }).catch((err)=>{

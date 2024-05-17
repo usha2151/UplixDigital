@@ -71,10 +71,15 @@ function Navbar() {
       {user ? (
         <>
           {user2.userData.type === 'admin' && (
-            <Link to="/pendingFestivals" className="mx-3 text-gray-600 hover:text-gray-900">
-             <i class="fa-solid fa-bell"></i>
-              {notificationCount.length > 0 && <span className="text-red-500">+{notificationCount.length}</span>}
-            </Link>
+            <Link to="/pendingFestivals" className="mx-3 text-gray-600 hover:text-gray-900 relative">
+            <i className="fa-solid fa-bell"></i>
+            {notificationCount.length > 0 && (
+              <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white transform translate-x-1/2 -translate-y-1/2 bg-red-500 rounded-full">
+                {notificationCount.length}
+              </span>
+            )}
+          </Link>
+          
           )}
           <button onClick= {() =>dispatch(logout())} className="mx-3 px-4 text-sm py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:bg-green-600">Logout</button>
         </>

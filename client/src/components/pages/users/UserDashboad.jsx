@@ -2,19 +2,19 @@ import React, { useEffect, useState } from "react";
 import Navbar from "../../common/Navbar";
 import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
-import { AddFestivals } from "../../../redux/actions/actions";
+import AddOccasion from "../Occasion/AddOccasion";
 
 const UserDashboard = () => {
   const dispatch = useDispatch();
   const [showPopup, setShowPopup] = useState(false);
   const [addEmail, setaddEmail] = useState(false);
   const [emailSchedule, setEmailScheduled] = useState(false);
-  const [festivalName, setFestivalName] = useState('');
-  const [festivalDate, setFestivalDate] = useState('');
-  const [festivalTitle, setFestivalTitle] = useState('');
+  // const [festivalName, setFestivalName] = useState('');
+  // const [festivalDate, setFestivalDate] = useState('');
+  // const [festivalTitle, setFestivalTitle] = useState('');
   const [searchInput, setSearchInput] = useState('');
-  const [filteredFestivals, setFilteredFestivals] = useState(null);
-  const [festival, addFestival] = useState(false);
+  // const [filteredFestivals, setFilteredFestivals] = useState(null);
+  // const [festival, addFestival] = useState(false);
   const [showSign, setShowSign] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [clientData, setClientData] = useState("");
@@ -98,11 +98,6 @@ const UserDashboard = () => {
     setIsModalOpen(!isModalOpen);
     setClientData(data)
   }
-  const plans = [
-    { id: 1, name: 'Free package' },
-    { id: 2, name: 'Standard Package' },
-    { id: 3, name: 'Business Package' },
-  ];
 
   const emailScheduled = (e) => {
     e.preventDefault();
@@ -151,10 +146,6 @@ const handleSave = async (event) => {
 
   
 
-
-  // active or inactive
-  const [isActive, setIsActive] = useState(false);
-
   const toggleActive = (id) => {
     setClients(prevClients => prevClients.map(client => {
       if (client.id === id) {
@@ -188,99 +179,99 @@ const fetchClientsData = async () => {
 };
   
   // festivals
-  const [occesion, setOccesion] = useState([
-    { name: 'Republic Day', date: '2024-01-15' },
-    { name: 'Basant Panchmi', date: '2024-02-20' },
-    { name: 'Holi', date: '2024-03-10' },
-    { name: 'Ram Navami', date: '2024-04-15' },
-    { name: 'Eid-ul-fiter', date: '2024-04-20' },
-    { name: 'Budh Poornima', date: '2024-05-10' },
-    // Add more festivals here
-  ]);
+  // const [occesion, setOccesion] = useState([
+  //   { name: 'Republic Day', date: '2024-01-15' },
+  //   { name: 'Basant Panchmi', date: '2024-02-20' },
+  //   { name: 'Holi', date: '2024-03-10' },
+  //   { name: 'Ram Navami', date: '2024-04-15' },
+  //   { name: 'Eid-ul-fiter', date: '2024-04-20' },
+  //   { name: 'Budh Poornima', date: '2024-05-10' },
+  //   // Add more festivals here
+  // ]);
 
-  const getMonthName = (month) => {
-    const monthNames = [
-      'January', 'February', 'March', 'April', 'May', 'June',
-      'July', 'August', 'September', 'October', 'November', 'December'
-    ];
-    return monthNames[parseInt(month, 10) - 1];
-  };
-  const groupedFestivals = occesion.reduce((grouped, festival) => {
-    const month = festival.date.split('-')[1];
-    grouped[month] = grouped[month] || [];
-    const formattedDate = new Date(festival.date);
-    festival.formattedDate = `${formattedDate.getDate()} ${getMonthName(month)}, ${formattedDate.getFullYear()}`;
-    grouped[month].push(festival);
-    return grouped;
-  }, {});
+  // const getMonthName = (month) => {
+  //   const monthNames = [
+  //     'January', 'February', 'March', 'April', 'May', 'June',
+  //     'July', 'August', 'September', 'October', 'November', 'December'
+  //   ];
+  //   return monthNames[parseInt(month, 10) - 1];
+  // };
+  // const groupedFestivals = occesion.reduce((grouped, festival) => {
+  //   const month = festival.date.split('-')[1];
+  //   grouped[month] = grouped[month] || [];
+  //   const formattedDate = new Date(festival.date);
+  //   festival.formattedDate = `${formattedDate.getDate()} ${getMonthName(month)}, ${formattedDate.getFullYear()}`;
+  //   grouped[month].push(festival);
+  //   return grouped;
+  // }, {});
 
   // add festival
-  const handleAddFestival = async (event) => {
-    event.preventDefault();
+//   const handleAddFestival = async (event) => {
+//     event.preventDefault();
   
-    // Check for duplicate festival name
-    const isDuplicateName = occesion.some(festival => festival.name === festivalName);
+//     // Check for duplicate festival name
+//     const isDuplicateName = occesion.some(festival => festival.name === festivalName);
   
-    if (isDuplicateName) {
-      alert('Festival name already exists. Please add a new Festival.');
-      return;
-    }
+//     if (isDuplicateName) {
+//       alert('Festival name already exists. Please add a new Festival.');
+//       return;
+//     }
   
-    // Store the festival into the database
-    const festivalData = {
-      date: festivalDate,
-      name: festivalName,
-      title: festivalTitle
-    };
+//     // Store the festival into the database
+//     const festivalData = {
+//       date: festivalDate,
+//       name: festivalName,
+//       title: festivalTitle
+//     };
   
-    try {
-      const response = await axios.post('http://localhost:8080/festivals/add-festivals', festivalData);
+//     try {
+//       const response = await axios.post('http://localhost:8080/festivals/add-festivals', festivalData);
   
-      // Check if response status is successful
-      if (response.status === 200) {
-        alert('Festival added successfully');
+//       // Check if response status is successful
+//       if (response.status === 200) {
+//         alert('Festival added successfully');
         
-        // Add the new festival to the array
-        // setOccesion([...occesion, { name: festivalName, date: festivalDate }]);
+//         // Add the new festival to the array
+//         // setOccesion([...occesion, { name: festivalName, date: festivalDate }]);
         
-        // Reset input fields after adding the festival
-        setFestivalName('');
-        setFestivalDate('');
-        setFestivalTitle('');
-      } else {
-        alert('Failed to add festival');
-      }
+//         // Reset input fields after adding the festival
+//         setFestivalName('');
+//         setFestivalDate('');
+//         setFestivalTitle('');
+//       } else {
+//         alert('Failed to add festival');
+//       }
   
-      return response.data; // Return server response data
-    } catch (error) {
-      console.error('Error adding festival:', error);
-      alert('Failed to add festival');
-      throw error; // Throw error to handle it where this function is called
-    }
-  };
+//       return response.data; // Return server response data
+//     } catch (error) {
+//       console.error('Error adding festival:', error);
+//       alert('Failed to add festival');
+//       throw error; // Throw error to handle it where this function is called
+//     }
+//   };
   
 
- // search festivals
- const handleSearchInputChange = (event) => {
-  const input = event.target.value.toLowerCase();
-  setSearchInput(input);
-  filterFestivals(input);
-};
-// Function to filter festivals based on search input
-const filterFestivals = (input) => {
-  const filtered = {};
+//  // search festivals
+//  const handleSearchInputChange = (event) => {
+//   const input = event.target.value.toLowerCase();
+//   setSearchInput(input);
+//   filterFestivals(input);
+// };
+// // Function to filter festivals based on search input
+// const filterFestivals = (input) => {
+//   const filtered = {};
 
-  Object.entries(groupedFestivals).forEach(([month, festivals]) => {
-    const filteredFestivalsInMonth = festivals.filter(festival =>
-      festival.name.toLowerCase().includes(input) || festival.formattedDate.toLowerCase().includes(input)
-    );
-    if (filteredFestivalsInMonth.length > 0) {
-      filtered[month] = filteredFestivalsInMonth;
-    }
-  });
+//   Object.entries(groupedFestivals).forEach(([month, festivals]) => {
+//     const filteredFestivalsInMonth = festivals.filter(festival =>
+//       festival.name.toLowerCase().includes(input) || festival.formattedDate.toLowerCase().includes(input)
+//     );
+//     if (filteredFestivalsInMonth.length > 0) {
+//       filtered[month] = filteredFestivalsInMonth;
+//     }
+//   });
 
-  setFilteredFestivals(filtered);
-};
+//   setFilteredFestivals(filtered);
+// };
 
 
 useEffect(() => {
@@ -715,7 +706,8 @@ useEffect(() => {
           </div>
         </div>
         {/* Left Sidebar */}
-        <div className="w-80 bg-white shadow-md p-4">
+        <AddOccasion  user={user2.userData.type} />
+        {/* <div className="w-80 bg-white shadow-md p-4">
           <h2 className="text-lg font-semibold mb-4 mt-12">List of Festivals</h2>
           <div class="relative">
                   <div class="absolute inset-y-0 rtl:inset-r-0 start-0 flex items-center ps-3 pointer-events-none">
@@ -785,74 +777,9 @@ useEffect(() => {
         ))}
           <button onClick={FestPopup} className="mt-4 px-4 py-2 text-base font-semibold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2>Add Festivals">Request New Festival</button>
      
-        </div>
+        </div> */}
         {/* show pop-up */}
-        {festival && (
-        <div className="fixed top-0 left-0 right-0 bottom-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div
-            className="bg-white p-5 rounded-lg relative"
-            style={{
-              width: '50vw',
-              maxWidth: '350px',
-              height: 'auto',
-              padding: '20px',
-            }}
-          >
-            {/* Close Icon */}
-            <button
-              className="absolute top-0 right-0 mt-2 mr-2 text-gray-400 hover:text-gray-600"
-              onClick={() =>  addFestival(false)}
-            >
-              <i className="fa-solid fa-xmark"></i>
-            </button>
-
-            <form onSubmit={handleAddFestival}>
-        <div className="mb-4.5">
-          <label className="block text-black dark:text-white mb-2">Date of Festival</label>
-          <input
-            type="date"
-            value={festivalDate}
-            onChange={(e) => setFestivalDate(e.target.value)}
-            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-            required
-          />
-        </div>
-
-        <div className="mb-4.5">
-          <label className="block text-black dark:text-white mb-2 mt-2">Name of Festival</label>
-          <input
-            type="text"
-            value={festivalName}
-            onChange={(e) => setFestivalName(e.target.value)}
-            placeholder="Enter Festival Name"
-            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-            required
-          />
-        </div>
-        <div className="mb-4.5">
-          <label className="block text-black dark:text-white mb-2 mt-2">Title of Festival</label>
-          <input
-            type="text"
-            value={festivalTitle}
-            onChange={(e) => setFestivalTitle(e.target.value)}
-            placeholder="Enter Festival Title"
-            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-            required
-          />
-        </div>
-
-        <div className="mt-4 flex justify-end">
-          <button
-            type="submit"
-            className="flex-shrink-0 px-4 py-2 text-base font-semibold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2"
-          >
-            Add Festival
-          </button>
-        </div>
-      </form>
-          </div>
-        </div>
-      )}
+        
       </div>
     </>
   );
