@@ -8,6 +8,7 @@ import { SignIn } from "./components/pages/form/SignIn";
 import PrivateRoute from "./components/common/Protected";
 import UserDashboard from "./components/pages/users/UserDashboad";
 import FestivalsRequest from "./components/pages/form/FestivalsRequest";
+import Dashbord from "./components/Dashboard";
 function App() {
 
 
@@ -23,6 +24,7 @@ function App() {
 
             </Route>
          <Route path="/" element={<SignUp />} />
+         <Route path="/dash" element={<Dashbord />} />
          <Route path="/signin" element={<SignIn />} />
          <Route path="/addUserInfo" element={<AddUserInfo />} />
          <Route path="/settings" element={<Settings />} />
