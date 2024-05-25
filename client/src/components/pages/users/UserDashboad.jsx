@@ -61,29 +61,30 @@ const UserDashboard = () => {
   // if user add smtp details
   const handleSubmitSmtp = async (e) => {
     e.preventDefault();
-    if(!SmtpPassword || !SmtpUserName){
-      alert('Add Smtp details first!');
-    }
-    else{
+    if (!SmtpPassword || !SmtpUserName) {
+        alert('Add SMTP details first!');
+    } else {
         try {
-      // Send data to Node.js server using Axios
-       await axios.post('http://localhost:8080/SMTP/smtp-add', {
-        userId: userLogginId.userData.id ? userLogginId.userData.id :  3,
-        SmtpUserName,
-        SmtpPassword,
-      }).then(() => {
-        alert('Smtp Details Added successfully');
-        setaddEmail(!addEmail);
-      console.log('SMTP email added successfully');
-      }).catch((err )=>{
-        alert(err);
-      })
-    } catch (error) {
-      // Handle error
-      console.error('Error adding SMTP email:', error);
+            // Send data to Node.js server using Axios
+            const response = await axios.post('http://localhost:8080/SMTP/smtp-add', {
+                userId: userLogginId.userData.id ? userLogginId.userData.id : 3,
+                SmtpUserName,
+                SmtpPassword,
+            });
+
+            alert(response.data.message); // Display the server message
+            if (response.data.success) {
+                setaddEmail(!addEmail);
+                console.log('SMTP email added successfully');
+            }
+        } catch (error) {
+            // Handle error
+            console.error('Error adding SMTP email:', error);
+            alert(error.response.data.message || 'Error adding SMTP email');
+        }
     }
-  }
-  }
+};
+
   
   
   const toggleSignPopup = () => {
