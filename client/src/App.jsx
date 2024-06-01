@@ -9,6 +9,10 @@ import PrivateRoute from "./components/common/Protected";
 import UserDashboard from "./components/pages/users/UserDashboad";
 import FestivalsRequest from "./components/pages/form/FestivalsRequest";
 import Dashbord from "./components/Dashboard";
+import Dash from "./components/dashPages/Dash";
+import FestivalList from "./components/dashPages/FestivalList";
+
+
 function App() {
 
 
@@ -24,7 +28,10 @@ function App() {
 
             </Route>
          <Route path="/" element={<SignUp />} />
-         <Route path="/dash" element={<Dashbord />} />
+         <Route path="/dashboard" element={<Dashbord />} />
+         <Route path="/dash" element={<Dash />} />
+         <Route path="/dash" element={<FestivalList />} />
+         
          <Route path="/signin" element={<SignIn />} />
          <Route path="/addUserInfo" element={<AddUserInfo />} />
          <Route path="/settings" element={<Settings />} />

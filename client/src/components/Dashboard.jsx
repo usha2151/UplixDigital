@@ -1,87 +1,7 @@
-import React, { Fragment, useState } from "react";
-
-import { Listbox, Transition } from "@headlessui/react";
-
+import React, { useState } from "react";
+import Dash from "./dashPages/Dash";
 
 
-const TableData = [
-  {
-    id: 12809,
-    product: "Apple Macbook Pro...",
-    order: "20/03/2023,01:10",
-    status: "Waiting Payment",
-    Qty: "x1",
-    price: "$4.012",
-    color: "#DD6107",
-    image: "https://www.tailwindtap.com/assets/admin/dashboard/user2.png",
-    customer: "Omar Griffith",
-  },
-  {
-    id: 12808,
-    product: "iBox iPhone 14Pro...",
-    order: "20/03/2023,01:10",
-    status: "Transition Done",
-    Qty: "x1",
-    price: "$2.092",
-    customer: "Omar Griffith",
-    image: "https://www.tailwindtap.com/assets/admin/dashboard/user3.png",
-    color: "#10B860",
-  },
-  {
-    id: 12807,
-    product: "Apple Macbook Pro...",
-    order: "20/03/2023,01:10",
-    status: "Transition Done",
-    Qty: "x1",
-    price: "$1.089",
-    customer: "Omar Griffith",
-    image: "https://www.tailwindtap.com/assets/admin/dashboard/user3.png",
-    color: "#10B860",
-  },
-  {
-    id: 12806,
-    product: "Apple Macbook Pro...",
-    order: "20/03/2023,01:10",
-    status: "Delivery to Cust",
-    Qty: "x3",
-    price: "$833",
-    customer: "Omar Griffith",
-    image: "https://www.tailwindtap.com/assets/admin/dashboard/user3.png",
-    color: "#4F80E1",
-  },
-  {
-    id: 12805,
-    product: "iBox iPhone 14Pro...",
-    order: "20/03/2023,01:10",
-    status: "Cancel",
-    Qty: "x3",
-    price: "$1.458",
-    customer: "Omar Griffith",
-    image: "https://www.tailwindtap.com/assets/admin/dashboard/user2.png",
-    color: "#FB4949",
-  },
-];
-
-
-const festival = [
-    {
-      month: "January",
-      fest: "Republic Day",
-      date: "14 January, 2024",
-    },
-    {
-        month: "January",
-        fest: "Republic Day",
-        date: "14 January, 2024",
-    },
-    {
-        month: "January",
-        fest: "Republic Day",
-        date: "14 January, 2024",
-    },
-
-   
-  ];
 
 const navigationList = [
   {
@@ -106,7 +26,9 @@ const navigationList = [
           d="M6 9C6 8.58579 6.33579 8.25 6.75 8.25H11.25C11.6642 8.25 12 8.58579 12 9V16.5C12 16.9142 11.6642 17.25 11.25 17.25C10.8358 17.25 10.5 16.9142 10.5 16.5V9.75H7.5V16.5C7.5 16.9142 7.16421 17.25 6.75 17.25C6.33579 17.25 6 16.9142 6 16.5V9Z"
         />
       </svg>
+      
     ),
+    path:"/dash",
   },
   {
     name: "Dashboard",
@@ -143,7 +65,7 @@ const navigationList = [
     ),
   },
   {
-    name: "Products",
+    name: "Festival List",
     svg: (
       <svg
         width="18"
@@ -170,6 +92,7 @@ const navigationList = [
         />
       </svg>
     ),
+    path:"/fest",
   },
   {
     name: "Customer",
@@ -191,99 +114,7 @@ const navigationList = [
       </svg>
     ),
   },
-  {
-    name: "Order",
-    svg: (
-      <svg
-        width="18"
-        height="18"
-        viewBox="0 0 18 18"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-        className="group-hover:fill-[#4F80E1] fill-[#637381]"
-      >
-        <path
-          fillRule="evenodd"
-          clipRule="evenodd"
-          d="M3.56 0.309091C3.71108 0.114514 3.94819 0 4.2 0H13.8C14.0518 0 14.2889 0.114514 14.44 0.309091L16.84 3.4C16.9439 3.53376 17 3.69644 17 3.86364V14.6818C17 15.2966 16.7471 15.8863 16.2971 16.321C15.847 16.7558 15.2365 17 14.6 17H3.4C2.76348 17 2.15303 16.7558 1.70294 16.321C1.25286 15.8863 1 15.2966 1 14.6818V3.86364C1 3.69644 1.05614 3.53376 1.16 3.4L3.56 0.309091ZM4.6 1.54545L2.6 4.12121V14.6818C2.6 14.8868 2.68429 15.0833 2.83431 15.2282C2.98434 15.3731 3.18783 15.4545 3.4 15.4545H14.6C14.8122 15.4545 15.0157 15.3731 15.1657 15.2282C15.3157 15.0833 15.4 14.8868 15.4 14.6818V4.12121L13.4 1.54545H4.6Z"
-        />
-        <path
-          fillRule="evenodd"
-          clipRule="evenodd"
-          d="M1.5 4.5C1.5 4.08579 1.83579 3.75 2.25 3.75H15.75C16.1642 3.75 16.5 4.08579 16.5 4.5C16.5 4.91421 16.1642 5.25 15.75 5.25H2.25C1.83579 5.25 1.5 4.91421 1.5 4.5Z"
-        />
-        <path
-          fillRule="evenodd"
-          clipRule="evenodd"
-          d="M6 6.75C6.41421 6.75 6.75 7.08579 6.75 7.5C6.75 8.09674 6.98705 8.66903 7.40901 9.09099C7.83097 9.51295 8.40326 9.75 9 9.75C9.59674 9.75 10.169 9.51295 10.591 9.09099C11.0129 8.66903 11.25 8.09674 11.25 7.5C11.25 7.08579 11.5858 6.75 12 6.75C12.4142 6.75 12.75 7.08579 12.75 7.5C12.75 8.49456 12.3549 9.44839 11.6517 10.1517C10.9484 10.8549 9.99456 11.25 9 11.25C8.00544 11.25 7.05161 10.8549 6.34835 10.1517C5.64509 9.44839 5.25 8.49456 5.25 7.5C5.25 7.08579 5.58579 6.75 6 6.75Z"
-        />
-      </svg>
-    ),
-  },
-  {
-    name: "Wallet",
-    svg: (
-      <svg
-        width="18"
-        height="18"
-        viewBox="0 0 18 18"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-        className="group-hover:fill-[#4F80E1] fill-[#637381]"
-      >
-        <path
-          d="M14.625 5.0625H3.375C2.44302 5.0625 1.6875 5.81802 1.6875 6.75V13.5C1.6875 14.432 2.44302 15.1875 3.375 15.1875H14.625C15.557 15.1875 16.3125 14.432 16.3125 13.5V6.75C16.3125 5.81802 15.557 5.0625 14.625 5.0625Z"
-          strokeWidth="1.5"
-          strokeLinejoin="round"
-        />
-        <path
-          d="M14.4619 5.0625V4.00781C14.4618 3.74913 14.4046 3.49366 14.2944 3.25963C14.1842 3.02559 14.0238 2.81876 13.8244 2.65388C13.6251 2.48901 13.3919 2.37016 13.1413 2.30581C12.8908 2.24147 12.6291 2.23322 12.375 2.28164L3.11625 3.86191C2.71418 3.93854 2.35144 4.15307 2.09062 4.46851C1.82979 4.78396 1.68722 5.18053 1.6875 5.58984V7.3125"
-          strokeWidth="1.5"
-          strokeLinejoin="round"
-        />
-        <path d="M12.9375 11.25C12.715 11.25 12.4975 11.184 12.3125 11.0604C12.1275 10.9368 11.9833 10.7611 11.8981 10.5555C11.813 10.35 11.7907 10.1238 11.8341 9.90552C11.8775 9.6873 11.9847 9.48684 12.142 9.32951C12.2993 9.17217 12.4998 9.06503 12.718 9.02162C12.9363 8.97821 13.1625 9.00049 13.368 9.08564C13.5736 9.17078 13.7493 9.31498 13.8729 9.49998C13.9965 9.68499 14.0625 9.9025 14.0625 10.125C14.0625 10.4234 13.944 10.7095 13.733 10.9205C13.522 11.1315 13.2359 11.25 12.9375 11.25Z" />
-      </svg>
-    ),
-  },
-  {
-    name: "Documents",
-    svg: (
-      <svg
-        width="14"
-        height="17"
-        viewBox="0 0 14 17"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-        className="group-hover:fill-[#4F80E1] fill-[#637381]"
-      >
-        <path
-          fillRule="evenodd"
-          clipRule="evenodd"
-          d="M0.65901 0.65901C1.08097 0.237053 1.65326 0 2.25 0H8.25C8.44891 0 8.63968 0.0790176 8.78033 0.21967L13.2803 4.71967C13.421 4.86032 13.5 5.05109 13.5 5.25V14.25C13.5 14.8467 13.2629 15.419 12.841 15.841C12.419 16.2629 11.8467 16.5 11.25 16.5H2.25C1.65326 16.5 1.08097 16.2629 0.65901 15.841C0.237053 15.419 0 14.8467 0 14.25V2.25C0 1.65326 0.237053 1.08097 0.65901 0.65901ZM2.25 1.5C2.05109 1.5 1.86032 1.57902 1.71967 1.71967C1.57902 1.86032 1.5 2.05109 1.5 2.25V14.25C1.5 14.4489 1.57902 14.6397 1.71967 14.7803C1.86032 14.921 2.05109 15 2.25 15H11.25C11.4489 15 11.6397 14.921 11.7803 14.7803C11.921 14.6397 12 14.4489 12 14.25V5.56066L7.93934 1.5H2.25Z"
-        />
-        <path
-          fillRule="evenodd"
-          clipRule="evenodd"
-          d="M8.25 0C8.66421 0 9 0.335786 9 0.75V4.5H12.75C13.1642 4.5 13.5 4.83579 13.5 5.25C13.5 5.66421 13.1642 6 12.75 6H8.25C7.83579 6 7.5 5.66421 7.5 5.25V0.75C7.5 0.335786 7.83579 0 8.25 0Z"
-        />
-        <path
-          fillRule="evenodd"
-          clipRule="evenodd"
-          d="M3 9C3 8.58579 3.33579 8.25 3.75 8.25H9.75C10.1642 8.25 10.5 8.58579 10.5 9C10.5 9.41421 10.1642 9.75 9.75 9.75H3.75C3.33579 9.75 3 9.41421 3 9Z"
-        />
-        <path
-          fillRule="evenodd"
-          clipRule="evenodd"
-          d="M3 12C3 11.5858 3.33579 11.25 3.75 11.25H9.75C10.1642 11.25 10.5 11.5858 10.5 12C10.5 12.4142 10.1642 12.75 9.75 12.75H3.75C3.33579 12.75 3 12.4142 3 12Z"
-        />
-        <path
-          fillRule="evenodd"
-          clipRule="evenodd"
-          d="M3 6C3 5.58579 3.33579 5.25 3.75 5.25H5.25C5.66421 5.25 6 5.58579 6 6C6 6.41421 5.66421 6.75 5.25 6.75H3.75C3.33579 6.75 3 6.41421 3 6Z"
-        />
-      </svg>
-    ),
-  },
+
 ];
 const footerNavigation = [
   {
@@ -348,96 +179,7 @@ const footerNavigation = [
     ),
   },
 ];
-const cardData = [
-  {
-    type: "Clients",
-    percentage: "50.43%",
-    arrow: "https://www.tailwindtap.com/assets/admin/dashboard/uparrow.svg",
-    graph: "https://www.tailwindtap.com/assets/admin/dashboard/graph1.svg",
-    price: "329",
-  },
-  {
-    type: "Email Sents",
-    percentage: "12.32%",
-    arrow: "https://www.tailwindtap.com/assets/admin/dashboard/uparrow.svg",
-    graph: "https://www.tailwindtap.com/assets/admin/dashboard/graph1.svg",
-    price: "200",
-  },
-  {
-    type: "Email Opened",
-    percentage: "10.89%",
-    arrow: "https://www.tailwindtap.com/assets/admin/dashboard/uparrow.svg",
-    graph: "https://www.tailwindtap.com/assets/admin/dashboard/graph1.svg",
-    price: "150",
-  },
-  {
-    type: "Email Replied",
-    percentage: "20.92%",
-    arrow: "https://www.tailwindtap.com/assets/admin/dashboard/downarrow.svg",
-    graph: "https://www.tailwindtap.com/assets/admin/dashboard/graph3.svg",
-    price: "100",
-  },
-];
-const DropDowns = ({ list }) => {
-  const [selected, setSelected] = useState(list[0]);
-  return (
-    <Listbox value={selected} onChange={setSelected}>
-      <div className="relative mt-1">
-        <Listbox.Button className="py-2.5 px-2 border border-[#E7E7E7] flex justify-center items-center gap-1 rounded text-sm text-[#637381] font-normal">
-          <span className="block truncate">{selected.name}</span>{" "}
-          <svg
-            width="14"
-            height="14"
-            viewBox="0 0 14 14"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <rect width="14" height="14" fill="white" />
-            <path
-              d="M11 5L7.5 8.5L4 5"
-              stroke="#637381"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </Listbox.Button>
-        <Transition
-          as={Fragment}
-          leave="transition ease-in duration-100"
-          leaveFrom="opacity-100"
-          leaveTo="opacity-0"
-        >
-          <Listbox.Options className="absolute mt-1 z-50 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm min-w-[100px]">
-            {list?.map((person, personIdx) => (
-              <Listbox.Option
-                key={personIdx}
-                className={({ active }) =>
-                  `relative cursor-default select-none py-2 pl-2 pr-4 ${
-                    active ? "bg-[#F6F8FA] text-gray-900" : "text-gray-900"
-                  }`
-                }
-                value={person}
-              >
-                {({ selected }) => (
-                  <span
-                    className={`block truncate ${
-                      selected
-                        ? "font-medium text-[#212B36]"
-                        : "font-normal text-[#637381]"
-                    }`}
-                  >
-                    {person.name}
-                  </span>
-                )}
-              </Listbox.Option>
-            ))}
-          </Listbox.Options>
-        </Transition>
-      </div>
-    </Listbox>
-  );
-};
+
 const Dashbord = () => {
   const [showMenu, setShowMenu] = useState(false);
   const [openSideBar, setOpenSieBar] = useState(true);
@@ -657,224 +399,7 @@ const Dashbord = () => {
               </div>
             </div>
           </div>
-          <div className="w-full py-3 pl-7 pr-5 grid xl:grid-cols-12 lg:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-5 justify-start">
-            {cardData?.map((data, key) => (
-              <div
-                className="p-5 xl:col-span-3 bg-white flex flex-col  2xl:max-w-none w-full rounded-xl gap-2 border border-[#E7E7E7] hover:shadow-xl cursor-pointer"
-                key={key}
-              >
-                <div
-                  className={`flex justify-between ${
-                    openSideBar ? " sm:flex-col md:flex-row" : " sm:flex-row"
-                  }`}
-                >
-                  <span className="text-[#637381] text-sm font-medium">
-                    {data?.type}
-                  </span>
-                  <div className="flex gap-1 items-center">
-                    <span className="">{data?.percentage}</span>
-                    <img src={data?.arrow} alt="graph" />
-                  </div>
-                </div>
-                <div
-                  className={`flex gap-4  justify-between ${
-                    openSideBar
-                      ? "flex-wrap sm:flex-col md:flex-row items-end md:flex-nowrap"
-                      : "flex-nowrap items-center"
-                  }`}
-                >
-                  <span className="text-2xl font-bold whitespace-nowrap">
-                    {data?.price}
-                  </span>
-                  <img src={data?.graph} alt="graph" />
-                </div>
-              </div>
-            ))}
-
-            <div className="p-3 bg-white flex flex-col xl:col-span-9 xl:row-auto lg:row-start-4 lg:col-span-2 rounded-xl border border-[#E7E7E7]">
-              <div className="flex items-center justify-between flex-wrap gap-1">
-                <div className="lg:max-w-sm w-2/5 lg:w-full border focus-within:border-blue-600 rounded-lg border-[#E7E7E7] py-1 px-4 justify-between items-center max-h-12 hidden md:flex">
-                  <input
-                    type="text"
-                    className="outline-none w-9/12"
-                    placeholder="Search..."
-                  />
-                  <svg
-                    width="15"
-                    height="15"
-                    viewBox="0 0 20 20"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      clipRule="evenodd"
-                      d="M9.16667 3.33335C5.94501 3.33335 3.33334 5.94503 3.33334 9.16669C3.33334 12.3883 5.94501 15 9.16667 15C12.3883 15 15 12.3883 15 9.16669C15 5.94503 12.3883 3.33335 9.16667 3.33335ZM1.66667 9.16669C1.66667 5.02455 5.02454 1.66669 9.16667 1.66669C13.3088 1.66669 16.6667 5.02455 16.6667 9.16669C16.6667 13.3088 13.3088 16.6667 9.16667 16.6667C5.02454 16.6667 1.66667 13.3088 1.66667 9.16669Z"
-                      fill="#637381"
-                    />
-                    <path
-                      fillRule="evenodd"
-                      clipRule="evenodd"
-                      d="M13.2857 13.2858C13.6112 12.9603 14.1388 12.9603 14.4643 13.2858L18.0893 16.9108C18.4147 17.2362 18.4147 17.7638 18.0893 18.0893C17.7638 18.4147 17.2362 18.4147 16.9108 18.0893L13.2857 14.4643C12.9603 14.1388 12.9603 13.6112 13.2857 13.2858Z"
-                      fill="#637381"
-                    />
-                  </svg>
-                </div>
-                <div class="text-end">
-                  <form class="flex w-full max-w-sm space-x-3">
-                    <div>
-                      All{" "}
-                      <span className="px-2 bg-black text-white rounded-md">
-                        34
-                      </span>
-                    </div>
-                    <div>
-                      Active{" "}
-                      <span className="px-2 bg-green-200 text-green-700 rounded-md">
-                        34
-                      </span>
-                    </div>
-                    <div>
-                      Inactive{" "}
-                      <span className="px-2 bg-rose-200 text-white text-rose-700 rounded-md">
-                        34
-                      </span>
-                    </div>
-                  </form>
-                </div>
-              </div>
-              <div className="w-full overflow-x-scroll md:overflow-auto max-w-xl xs:max-w-xl sm:max-w-xl md:max-w-7xl 2xl:max-w-none mt-1">
-                <table className="table-auto overflow-scroll md:overflow-auto w-full text-left font-inter border-separate border-spacing-y-1">
-                  <thead className="bg-[#222E3A]/[6%] rounded-lg text-base text-white font-semibold w-full">
-                    <tr className="">
-                      <th className="py-3 pl-3 text-[#212B36] text-sm font-normal whitespace-nowrap rounded-l-lg">
-                        Order ID
-                      </th>
-                      <th className="py-3 pl-1 text-[#212B36] text-sm font-normal whitespace-nowrap">
-                        Product
-                      </th>
-                      <th className="py-3 text-[#212B36] text-sm font-normal whitespace-nowrap">
-                        Order time
-                      </th>
-                      <th className="py-3 text-[#212B36] text-sm font-normal whitespace-nowrap">
-                        Status
-                      </th>
-                      <th className="py-3 px-2.5 text-[#212B36] text-sm font-normal whitespace-nowrap">
-                        Qty
-                      </th>
-                      <th className="py-3 text-[#212B36] text-sm font-normal whitespace-nowrap">
-                        Total Price
-                      </th>
-                      <th className="py-3 pl-1 text-[#212B36] text-sm font-normal whitespace-nowrap rounded-r-lg">
-                        Customer
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {TableData.map((data) => (
-                      <tr
-                        key={data.id}
-                        className="drop-shadow-[0_0_10px_rgba(34,46,58,0.02)] bg-[#f6f8fa] hover:shadow-2xl cursor-pointer"
-                      >
-                        <td className="py-4 pl-3 text-sm font-normal text-[#637381] rounded-l-lg">
-                          {data.id}
-                        </td>
-                        <td className="py-4 px-1 text-sm font-normal text-[#637381]">
-                          {data.product}
-                        </td>
-                        <td className="py-4 px-1 text-sm font-normal text-[#637381]">
-                          {data.order}
-                        </td>
-                        <td
-                          className="py-4 px-1 text-sm font-normal text-[#637381]"
-                          style={{
-                            color: data?.color,
-                          }}
-                        >
-                          {data.status}
-                        </td>
-                        <td className="py-4 px-2.5 text-sm font-normal text-[#637381]">
-                          {data.Qty}
-                        </td>
-                        <td className="py-4 px-1 text-sm font-normal text-[#637381]">
-                          {data.price}
-                        </td>
-                        <td className="py-4 px-1 text-sm font-normal text-[#637381] rounded-r-[8px]">
-                          <div className="relative flex gap-1 items-center">
-                            <div className="w-[22px] h-[22px]">
-                              <img
-                                src={data?.image}
-                                alt="hepta-brown"
-                                className="min-w-[22px] min-h-[22px]"
-                              />
-                            </div>
-                            {data.customer}
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-            <div className="xl:row-span-2 row-span-1 lg:row-start-4 bg-white py-5 xl:col-span-3 px-3 flex flex-col gap-5 h-full rounded-xl border border-[#E7E7E7]">
-              <span className="text-sm text-[#212B36] font-semibold -tracking-[0.15px]">
-                List of Festivals
-              </span>
-              <div className="lg:max-w-sm w-2/5 lg:w-full border focus-within:border-blue-600 rounded-lg border-[#E7E7E7] py-1 px-4 justify-between items-center max-h-12 hidden md:flex">
-                <input
-                  type="text"
-                  className="outline-none w-9/12"
-                  placeholder="Search..."
-                />
-                <svg
-                  width="15"
-                  height="15"
-                  viewBox="0 0 20 20"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    fillRule="evenodd"
-                    clipRule="evenodd"
-                    d="M9.16667 3.33335C5.94501 3.33335 3.33334 5.94503 3.33334 9.16669C3.33334 12.3883 5.94501 15 9.16667 15C12.3883 15 15 12.3883 15 9.16669C15 5.94503 12.3883 3.33335 9.16667 3.33335ZM1.66667 9.16669C1.66667 5.02455 5.02454 1.66669 9.16667 1.66669C13.3088 1.66669 16.6667 5.02455 16.6667 9.16669C16.6667 13.3088 13.3088 16.6667 9.16667 16.6667C5.02454 16.6667 1.66667 13.3088 1.66667 9.16669Z"
-                    fill="#637381"
-                  />
-                  <path
-                    fillRule="evenodd"
-                    clipRule="evenodd"
-                    d="M13.2857 13.2858C13.6112 12.9603 14.1388 12.9603 14.4643 13.2858L18.0893 16.9108C18.4147 17.2362 18.4147 17.7638 18.0893 18.0893C17.7638 18.4147 17.2362 18.4147 16.9108 18.0893L13.2857 14.4643C12.9603 14.1388 12.9603 13.6112 13.2857 13.2858Z"
-                    fill="#637381"
-                  />
-                </svg>
-              </div>
-              <div className="flex flex-col gap-5">
-               
-  {festival?.map((data, index) => (
-                <div className="border-b rounded-xl pb-4 bg-slate-200 p-2" key={index}>
-                  <div className="space-y-2" >
-                    <div className=" justify-between">
-                      <div className="flex items-center justify-between">
-                        <h2 className="text-md mb-2 font-bold">{data?.month}</h2>
-                        <p className="text-sm">{data?.fest}</p>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <p className="mr-2">{data?.date}</p>
-                        <input
-                          type="checkbox"
-                          className="form-checkbox h-4 w-4 text-blue-500"
-                        />
-                      </div>
-                    </div>
-                  </div>   
-                </div>
-            ))}
-
-<button  className="mt-4 px-4 py-2 text-base font-semibold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2>Add Festivals">Request New Festival</button>
-     
-              </div>
-            </div>
-          </div>
+          <Dash/>
         </div>
       </div>
     </div>
